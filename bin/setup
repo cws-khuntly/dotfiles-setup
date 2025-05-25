@@ -899,7 +899,7 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
 fi
 
-if [[ -z "${PACKAGE_NAME}" ]]; then
+if [[ -z "${PACKAGE_CONFIG}" ]]; then
     RETURN_CODE="1";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
