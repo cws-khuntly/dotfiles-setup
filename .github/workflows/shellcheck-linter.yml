@@ -1,0 +1,42 @@
+# =====  WORKFLOW  ============================================================
+#          NAME:  shellcheck-linter.yml
+#   DESCRIPTION:  GitHub action for shellcheck
+# ============================================================================
+name: ShellCheck Linter
+on: [push, pull_request]
+
+jobs:
+  scan:
+    name: ShellCheck Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+    strategy:
+      matrix:
+        match: [ ./alias ./bashrc ./functions ./profile ./profiles ./bin/* ./lib/system/*.sh ./lib/profile/*.sh ./lib/setup/*.sh ./lib/*.sh ./etc/system/*.alias ./etc/system/*.settings ./etc/profile/*.alias ./etc/profile/*.settings **/*.sh ]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          submodules: false
+      - name: Shellcheck Scan
+        uses: ludeeus/action-shellcheck@master
+        env:
+          SHELLCHECK_OPTS: '-x -s bash'
+        with:
+          additional_files: './alias ./bashrc ./functions ./profile ./profiles ./bin/* ./lib/system/*.sh ./lib/profile/*.sh ./lib/setup/*.sh ./lib/*.sh ./etc/system/*.alias ./etc/system/*.settings ./etc/profile/*.alias ./etc/profile/*.settings *.sh'
+          severity: 'error'
+          check_together: 'yes'
+          format: 'gcc'
+        if: ${{ success() }}
+      - name: Shellcheck SARIF Scan
+        uses: reactive-firewall/shellcheck-scan@v1
+        with:
+          match: ${{ matrix.match }}
+          severity: 'warning'
+          shell-format: 'bash'
+          publish-artifacts: true
+        if: ${{ success() }}
