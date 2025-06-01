@@ -26,11 +26,12 @@ declare -i RETURN_CODE=0;
 declare CNAME="$(basename "${BASH_SOURCE[0]}")";
 declare FUNCTION_NAME="${CNAME}#startup";
 declare SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
-declare CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
+declare -x SETUP_ROOT="${SCRIPT_ROOT}";
+declare CONFIG_FILE="${SETUP_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
 
-if [[ -r "${SCRIPT_ROOT}/lib/system/logging.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logging.sh" ]]; then
+if [[ -r "${SETUP_ROOT}/lib/system/logging.sh" ]] && [[ -s "$SETUP_ROOT}/lib/system/logging.sh" ]]; then
     # shellcheck source=../lib/system/logging.sh
-    source "${SCRIPT_ROOT}/lib/system/logging.sh";
+    source "${SETUP_ROOT}/lib/system/logging.sh";
 elif [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
     # shellcheck source=/home/khuntly/lib/system/logging.sh
     source "${HOME}/lib/system/logging.sh"; ## if its here, override the above and use it
@@ -58,6 +59,7 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CNAME -> ${CNAME}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FUNCTION_NAME -> ${FUNCTION_NAME}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SCRIPT_ROOT -> ${SCRIPT_ROOT}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_ROOT -> ${SETUP_ROOT}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PRIMARY_CONFIG_FILE -> ${PRIMARY_CONFIG_FILE}";
 fi
 
@@ -79,12 +81,12 @@ fi
 #
 # load the system libs
 #
-if [[ -d "${SCRIPT_ROOT}/lib/system" ]]; then
+if [[ -d "${SETUP_ROOT}/lib/system" ]]; then
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found library directory ${SCRIPT_ROOT}/lib/system";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found library directory ${SETUP_ROOT}/lib/system";
     fi
 
-    for SYSLIB in "${SCRIPT_ROOT}/lib/system"/*.sh; do
+    for SYSLIB in "${SETUP_ROOT}/lib/system"/*.sh; do
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${SYSLIB}";
         fi
@@ -958,7 +960,7 @@ else
         FUNCTION_NAME="${CNAME}#loadScriptLibs";
 
         ## bring in any library scripts
-        for LIBENTRY in "${SCRIPT_ROOT}/lib/$(basename "${CNAME}" ".sh")"/*.sh; do
+        for LIBENTRY in "${SETUP_ROOT}/lib/$(basename "${CNAME}" ".sh")"/*.sh; do
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${LIBENTRY}";
             fi
@@ -1105,6 +1107,7 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${RUNTIME}" ]] && unset -v RUNTIME;
 [[ -n "${CNAME}" ]] && unset -v CNAME;
 [[ -n "${SCRIPT_ROOT}" ]] && unset -v SCRIPT_ROOT;
+[[ -n "${SETUP_ROOT}" ]] && unset -v SETUP_ROOT;
 [[ -n "${METHOD_NAME}" ]] && unset -v METHOD_NAME;
 [[ -n "${PRIMARY_CONFIG_FILE}" ]] && unset -v PRIMARY_CONFIG_FILE;
 [[ -n "${WORKING_CONFIG_FILE}" ]] && unset -v WORKING_CONFIG_FILE;
