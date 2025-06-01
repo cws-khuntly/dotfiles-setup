@@ -273,7 +273,7 @@ function runInstallRemoteFiles()
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
     [[ -f "${installation_script}" ]] && rm -f "${installation_script}";
-    
+
     [[ -n "${target_host}" ]] && unset -v target_host;
 	[[ -n "${error_count}" ]] && unset -v error_count;
 	[[ -n "${target_hostname}" ]] && unset -v target_hostname;
@@ -368,7 +368,7 @@ function runDeployLocalFiles()
     else
 		transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
 		transfer_file_list+="${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}"),";
-		transfer_file_list+="${REMOTE_INSTALL_CONF}|${DEPLOY_TO_DIR}/$(basename "${REMOTE_INSTALL_CONF}")";
+		transfer_file_list+="${INSTALL_CONF}|${DEPLOY_TO_DIR}/$(basename "${INSTALL_CONF}")";
 
 		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
 			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}";
