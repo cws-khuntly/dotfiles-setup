@@ -66,7 +66,7 @@ function installFiles()
 
     case "${install_mode}" in
         "${INSTALL_LOCATION_LOCAL}")
-            (( ${#} != 1 )) && return 3;
+            (( ${#} != 2 )) && return 3;
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installLocalFiles";
@@ -124,8 +124,8 @@ function installFiles()
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred decompressing the archive. Please review logs.";
                     fi
                 else
-                    if [[ -n "${INSTALL_CONF}" ]]; then
-                        grep "mkdir" < "${INSTALL_CONF}" | while read -r entry; do
+                    if [[ -n "${install_conf}" ]]; then
+                        grep "mkdir" < "${install_conf}" | while read -r entry; do
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
                             fi
@@ -219,14 +219,14 @@ function installFiles()
                     fi
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installLocalFiles ${INSTALL_CONF}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installLocalFiles ${install_conf}";
                     fi
 
                     [[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${function_name}" ]] && unset -v function_name;
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    installLocalFiles "${INSTALL_CONF}";
+                    installLocalFiles "${install_conf}";
                     ret_code="${?}";
 
                     cname="installutils.sh";
@@ -264,14 +264,14 @@ function installFiles()
             fi
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installRemoteFiles ${target_host} ${target_port} ${target_user} ${INSTALL_CONF}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installRemoteFiles ${target_host} ${target_port} ${target_user} ${install_conf}";
             fi
 
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            installRemoteFiles "${target_host}" "${target_port}" "${target_user}" "${INSTALL_CONF}";
+            installRemoteFiles "${target_host}" "${target_port}" "${target_user}" "${install_conf}";
             ret_code="${?}";
 
             cname="installutils.sh";
@@ -305,7 +305,7 @@ function installFiles()
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${install_mode}" ]] && unset -v install_mode;
-    [[ -n "${INSTALL_CONF}" ]] && unset -v INSTALL_CONF;
+    [[ -n "${install_conf}" ]] && unset -v install_conf;
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
@@ -351,7 +351,7 @@ function installLocalFiles()
     local -i ret_code=0;
     local -i return_code=0;
     local -i error_count=0;
-    local INSTALL_CONF;
+    local install_conf;
     local entry;
     local entry_command;
     local entry_source;
@@ -377,13 +377,13 @@ function installLocalFiles()
 
     (( ${#} != 1 )) && return 3;
 
-    INSTALL_CONF="${1}";
+    install_conf="${1}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "INSTALL_CONF -> ${INSTALL_CONF}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_conf -> ${install_conf}";
     fi
 
-    if [[ -z "${INSTALL_CONF}" ]] || [[ ! -s "${INSTALL_CONF}" ]]; then
+    if [[ -z "${install_conf}" ]] || [[ ! -s "${install_conf}" ]]; then
         return_code=1;
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -394,7 +394,7 @@ function installLocalFiles()
         IFS="${MODIFIED_IFS}";
 
         ## clean up home directory first
-        for entry in $(< "${INSTALL_CONF}"); do
+        for entry in $(< "${install_conf}"); do
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
             fi
@@ -420,7 +420,7 @@ function installLocalFiles()
                 (( error_count += 1 ));
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry command from ${INSTALL_CONF} was empty. entry_command -> ${entry_command}, entry_source -> ${entry_source}, entry_target -> ${entry_target}";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided entry command from ${install_conf} was empty. entry_command -> ${entry_command}, entry_source -> ${entry_source}, entry_target -> ${entry_target}";
                 fi
 
                 continue;
@@ -608,7 +608,7 @@ function installLocalFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${INSTALL_CONF}" ]] && unset -v INSTALL_CONF;
+    [[ -n "${install_conf}" ]] && unset -v install_conf;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${entry_command}" ]] && unset -v entry_command;
@@ -704,7 +704,7 @@ function installRemoteFiles()
 	[[ -n "${cname}" ]] && unset -v cname;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-    install_response="$(fssh "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")")";
+    install_response="$(fssh "${SSH_CONFIG_FILE}" "${target_host}" "${target_port}" "${target_user}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")")";
     ret_code="${?}";
 
 	cname="installutils.sh";

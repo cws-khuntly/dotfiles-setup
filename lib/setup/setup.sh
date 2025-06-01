@@ -50,7 +50,7 @@ function runInstallLocalFiles()
     fi
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installFiles ${INSTALL_LOCATION_LOCAL}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installFiles ${INSTALL_LOCATION_LOCAL} ${INSTALL_CONF}";
 	fi
 
     [[ -n "${cname}" ]] && unset -v cname;
@@ -182,8 +182,8 @@ function runInstallRemoteFiles()
                 printf \"%s\n\" umask 022;
                 printf \"%s\n\" [[ -d ${INSTALL_PATH} ]] && rm -rf ${INSTALL_PATH}; mkdir -pv ${INSTALL_PATH} > /dev/null 2>&1;
                 printf \"%s\n\" cd ${INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -
-                printf \"%s\n\n\" chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup;${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_CONFIG_FILE}
-                printf \"%s\n\n\"  ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_CONFIG_FILE}
+                printf \"%s\n\n\" chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup;${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${PACKAGE_CONFIG_FILE}")
+                printf \"%s\n\n\"  ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${PACKAGE_CONFIG_FILE}")
                 printf \"%s\n\n\" printf \"%s\" \${?}";
         fi
 
@@ -195,7 +195,7 @@ function runInstallRemoteFiles()
             printf "%s\n" "[[ -d ${INSTALL_PATH} ]] && rm -rf ${INSTALL_PATH}; mkdir -pv ${INSTALL_PATH} > /dev/null 2>&1;";
             printf "%s\n" "cd ${INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -;";
             printf "%s\n\n" "chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup;";
-            printf "%s\n\n" "${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${PACKAGE_CONFIG_FILE};";
+            printf "%s\n\n" "${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n $(basename "${PACKAGE_CONFIG_FILE}");";
             printf "%s\n\n" "printf "%s" \${?}";
         } >| "${installation_script}";
 
@@ -239,14 +239,14 @@ function runInstallRemoteFiles()
             else
                 ## ok, files should be out there. lets go
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fssh ${SSH_CONFIG_FILE} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}/$(basename \"${installation_script}\"))";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installRemoteFiles ${target_host} ${target_port} ${target_user} ${installation_script}";
                 fi
 
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                install_response="$(fssh "${SSH_CONFIG_FILE}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}/$(basename "${installation_script}")")";
+                install_response="$(installRemoteFiles "${target_host}" "${target_port}" "${target_user}" "${installation_script}")";
                 ret_code="${?}";
 
                 cname="setup.sh";
@@ -254,7 +254,7 @@ function runInstallRemoteFiles()
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_response -> ${install_response}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "fssh -> ret_code -> ${ret_code}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installRemoteFiles -> ret_code -> ${ret_code}";
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) || [[ -z "${install_response}" ]]; then
