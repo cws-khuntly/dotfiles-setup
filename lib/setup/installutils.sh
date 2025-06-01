@@ -33,7 +33,6 @@ function installFiles()
     local -i return_code=0;
     local -i error_count=0;
     local install_mode;
-    local INSTALL_CONF;
     local target_host;
     local target_port;
     local target_user;

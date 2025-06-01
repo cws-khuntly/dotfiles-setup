@@ -57,7 +57,7 @@ function runInstallLocalFiles()
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	installFiles "${INSTALL_LOCATION_LOCAL}";
+	installFiles "${INSTALL_LOCATION_LOCAL}" "${INSTALL_CONF}";
 	ret_code="${?}";
 
     cname="setup.sh";
@@ -128,6 +128,7 @@ function runInstallRemoteFiles()
 	local target_hostname;
 	local target_ssh_port;
 	local target_ssh_user;
+    local install_conf;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -182,20 +183,19 @@ function runInstallRemoteFiles()
                 printf \"%s\n\" umask 022;
                 printf \"%s\n\" [[ -d ${INSTALL_PATH} ]] && rm -rf ${INSTALL_PATH}; mkdir -pv ${INSTALL_PATH} > /dev/null 2>&1;
                 printf \"%s\n\" cd ${INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -
-                printf \"%s\n\n\" ${INSTALL_PATH}/bin/setup --config=${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") --action=installFiles --servername=${target_host} --username=${target_user}
+                printf \"%s\n\n\" ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_CONFIG_FILE}
                 printf \"%s\n\n\" printf \"%s\" \${?}";
         fi
 
         ## build the install script
         {
             printf "%s\n\n" "#!/usr/bin/env bash";
-            printf "%s\n" "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;";
-            printf "%s\n\n" "error_counter=0;";
-            printf "%s\n" "umask 022";
+            printf "%s\n\n" "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;";
+            printf "%s\n" "umask 022;";
             printf "%s\n" "[[ -d ${INSTALL_PATH} ]] && rm -rf ${INSTALL_PATH}; mkdir -pv ${INSTALL_PATH} > /dev/null 2>&1;";
             printf "%s\n" "cd ${INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -;";
-            printf "%s\n\n" "${INSTALL_PATH}/bin/setup --config=${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}") --action=installFiles --servername=${target_host} --username=${target_user}";
-            printf "%s\n\n" "printf \"%s\" \${?}";
+            printf "%s\n\n" "${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${PACKAGE_CONFIG_FILE};";
+            printf "%s\n\n" "printf "%s" \${?}";
         } >| "${installation_script}";
 
         if [[ ! -s "${installation_script}" ]]; then
@@ -245,7 +245,7 @@ function runInstallRemoteFiles()
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                installFiles "${INSTALL_LOCATION_REMOTE}" "${target_hostname}" "${target_ssh_port}" "${target_ssh_user}";
+                fuckin fixme
                 ret_code="${?}";
 
                 cname="setup.sh";
