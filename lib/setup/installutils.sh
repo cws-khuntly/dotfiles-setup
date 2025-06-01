@@ -384,40 +384,13 @@ function installLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "INSTALL_CONF -> ${INSTALL_CONF}";
     fi
 
-    if [[ -z "${INSTALL_CONF}" ]]; then
+    if [[ -z "${INSTALL_CONF}" ]] || [[ ! -s "${INSTALL_CONF}" ]]; then
         return_code=1;
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "No installation configuration file was provided. Cannot continue.";
         fi
     else
-        if [[ ! -d "${INSTALL_PATH}" ]]; then
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${INSTALL_PATH}";
-            fi
-
-            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-            cmd_output="$(mkdir -pv "${INSTALL_PATH}")";
-            ret_code="${?}";
-
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "mkdir/${INSTALL_PATH} -> ret_code -> ${ret_code}";
-            fi
-
-            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
-
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Unable to create installation directory. Please review logs.";
-                fi
-            fi
-        fi
-
-
-    if [[ -s "${INSTALL_CONF}" ]]; then
         ## change the IFS
         IFS="${MODIFIED_IFS}";
 
@@ -600,12 +573,6 @@ function installLocalFiles()
 
         ## restore the original ifs
         IFS="${CURRENT_IFS}";
-    else
-        return_code=1;
-
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Installation configuration file ${INSTALL_CONF} not found or cannot be read. Please ensure the file exists and can be read by the current user.";
-        fi
     fi
 
     ## cleanup
