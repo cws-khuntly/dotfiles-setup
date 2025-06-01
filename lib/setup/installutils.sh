@@ -108,6 +108,21 @@ function installFiles()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Installation path ${INSTALL_PATH} exists, taking backup.";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "NOTE:";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "A backup *attempt* is taken but it is not verified. A removal *attempt* is made but is not verified.";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ( cd ${INSTALL_PATH} || return 1; tar -cf - ./*) | ${ARCHIVE_PROGRAM} > $(dirname "${INSTALL_PATH}")/${PACKAGE_NAME}.${BACKUP_DATE_STAMP}.${ARCHIVE_FILE_EXTENSION}";
+                fi
+
+                ( cd "${INSTALL_PATH}" || return 1; tar -cf - ./*) | ${ARCHIVE_PROGRAM} > "$(dirname "${INSTALL_PATH}")/${PACKAGE_NAME}.${BACKUP_DATE_STAMP}.${ARCHIVE_FILE_EXTENSION}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${INSTALL_PATH}/*";
+                fi
+
+                rm -rf "${INSTALL_PATH}"/*;
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${INSTALL_PATH} || return 1; tar -xf - )";
                 fi
 
