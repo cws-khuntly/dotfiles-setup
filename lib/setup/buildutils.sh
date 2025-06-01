@@ -50,7 +50,7 @@ function buildSetupPackage()
 
     (( ${#} != 1 )) && return 3;
 
-    source_path="${SCRIPT_ROOT}";
+    source_path="${SETUP_ROOT}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_path -> ${source_path}";
