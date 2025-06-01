@@ -33,6 +33,7 @@ function installFiles()
     local -i return_code=0;
     local -i error_count=0;
     local install_mode;
+    local install_conf;
     local target_host;
     local target_port;
     local target_user;
@@ -56,12 +57,14 @@ function installFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} == 0 )) && return 3;
+    (( ${#} < 2 )) && return 3;
 
     install_mode="${1}";
+    install_conf="${2}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_mode -> ${install_mode}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_conf -> ${install_conf}";
     fi
 
     case "${install_mode}" in
@@ -247,15 +250,15 @@ function installFiles()
             fi
             ;;
         "${INSTALL_LOCATION_REMOTE}")
-            (( ${#} != 4 )) && return 3;
+            (( ${#} != 5 )) && return 3;
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Target host is remote: ${target_host}. Performing remote install.";
             fi
 
-            target_host="${2}";
-            target_port="${3}";
-            target_user="${4}";
+            target_host="${3}";
+            target_port="${4}";
+            target_user="${5}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";

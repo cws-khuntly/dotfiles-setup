@@ -180,10 +180,9 @@ function runInstallRemoteFiles()
                 printf \"%s\n\n\" #!/usr/bin/env bash
                 printf \"%s\n\n\" PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;
                 printf \"%s\n\" umask 022;
-                printf \"%s\n\" [[ -d ${INSTALL_PATH} ]] && rm -rf ${INSTALL_PATH}; mkdir -pv ${INSTALL_PATH} > /dev/null 2>&1;
-                printf \"%s\n\" cd ${INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -
-                printf \"%s\n\n\" chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup;${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${PACKAGE_CONFIG_FILE}")
-                printf \"%s\n\n\"  ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${PACKAGE_CONFIG_FILE}")
+                printf \"%s\n\" ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${INSTALL_PATH}\" || return 1; tar -xf - );
+                printf \"%s\n\n\" chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup;
+                printf \"%s\n\n\" ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${PACKAGE_CONFIG_FILE}")
                 printf \"%s\n\n\" printf \"%s\" \${?}";
         fi
 
@@ -192,8 +191,7 @@ function runInstallRemoteFiles()
             printf "%s\n\n" "#!/usr/bin/env bash";
             printf "%s\n\n" "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;";
             printf "%s\n" "umask 022;";
-            printf "%s\n" "[[ -d ${INSTALL_PATH} ]] && rm -rf ${INSTALL_PATH}; mkdir -pv ${INSTALL_PATH} > /dev/null 2>&1;";
-            printf "%s\n" "cd ${INSTALL_PATH}; ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | tar -xf -;";
+            printf "%s\n" "${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${INSTALL_PATH}\" || return 1; tar -xf - );";
             printf "%s\n\n" "chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup;";
             printf "%s\n\n" "${USABLE_TMP_DIR:-${TMPDIR}}/bin/setup -n $(basename "${PACKAGE_CONFIG_FILE}");";
             printf "%s\n\n" "printf "%s" \${?}";
@@ -351,21 +349,21 @@ function runDeployLocalFiles()
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	buildPackage "${SOURCE_PATH}";
+	buildDeploymentPackage "${SOURCE_PATH}";
 	ret_code="${?}";
 
     cname="setup.sh";
 	function_name="${cname}#${FUNCNAME[0]}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "buildPackage -> ret_code -> ${ret_code}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "buildDeploymentPackage -> ret_code -> ${ret_code}";
 	fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
 		[[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute buildPackage. Please review logs.";
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute buildDeploymentPackage. Please review logs.";
         fi
     else
 		transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
@@ -487,7 +485,8 @@ function runDeployRemoteFiles()
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	buildPackage "${SOURCE_PATH}";
+    buildSetupPackage;
+	buildDeploymentPackage "${SOURCE_PATH}";
 	ret_code="${?}";
 
     cname="setup.sh";
@@ -504,9 +503,10 @@ function runDeployRemoteFiles()
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute buildPackage. Please review logs.";
         fi
     else
+        transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
 		transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
 		transfer_file_list+="${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}"),";
-		transfer_file_list+="${REMOTE_INSTALL_CONF}|${DEPLOY_TO_DIR}/$(basename "${REMOTE_INSTALL_CONF}")";
+		transfer_file_list+="${INSTALL_CONF}|${DEPLOY_TO_DIR}/$(basename "${INSTALL_CONF}")";
 
 		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
 			writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}";
