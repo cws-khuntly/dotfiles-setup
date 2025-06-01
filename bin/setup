@@ -29,13 +29,13 @@ declare SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/nu
 declare CONFIG_FILE="${SCRIPT_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
 
 if [[ -r "${SCRIPT_ROOT}/lib/system/logging.sh" ]] && [[ -s "${SCRIPT_ROOT}/lib/system/logging.sh" ]]; then
-    # shellcheck source=../../lib/system/logging.sh
+    # shellcheck source=../lib/system/logging.sh
     source "${SCRIPT_ROOT}/lib/system/logging.sh";
 elif [[ -r "${HOME}/lib/system/logging.sh" ]] && [[ -s "${HOME}/lib/system/logging.sh" ]]; then
-    # shellcheck source=${HOME}/lib/system/logging.sh
-    source "${HOME}/lib/system/logging.sh";
+    # shellcheck source=/home/khuntly/lib/system/logging.sh
+    source "${HOME}/lib/system/logging.sh"; ## if its here, override the above and use it
 elif [[ -r "/usr/local/bin/logging.sh" ]] && [[ -s "/usr/local/bin/logging.sh" ]]; then
-    source "/usr/local/bin/logging.sh";
+    source "/usr/local/bin/logging.sh"; ## if its here, use it
 else
     printf "\[\e[91m\]%s\n" "Unable to load logger. No logging enabled!" >&2;
 fi
