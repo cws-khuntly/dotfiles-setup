@@ -237,9 +237,10 @@ function runInstallRemoteFiles()
                         printf \"%s\n\n\" #!/usr/bin/env bash
                         printf \"%s\n\n\" PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;
                         printf \"%s\n\" umask 022;
-                        printf \"%s\n\" ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );
-                        printf \"%s\n\n\" chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}/bin/setup;
-                        printf \"%s\n\n\" ${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}/bin/setup -n ${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${PACKAGE_CONFIG_FILE}")
+                        printf \"%s\n\" mkdir -pv ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}
+                        printf \"%s\n\" ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );
+                        printf \"%s\n\n\" chmod 755 ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup;
+                        printf \"%s\n\n\" ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n ${DEPLOY_TO_DIR}/$(basename "${PACKAGE_CONFIG_FILE}")
                         printf \"%s\n\n\" printf \"%s\" \${?}";
                 fi
 
@@ -248,9 +249,10 @@ function runInstallRemoteFiles()
                     printf "%s\n\n" "#!/usr/bin/env bash";
                     printf "%s\n\n" "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;";
                     printf "%s\n" "umask 022;";
-                    printf "%s\n" "${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );";
-                    printf "%s\n\n" "chmod 755 ${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}/bin/setup;";
-                    printf "%s\n\n" "${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}/bin/setup -n $(basename "${PACKAGE_CONFIG_FILE}");";
+                    printf "%s\n" "mkdir -pv \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\";":
+                    printf "%s\n" "${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );";
+                    printf "%s\n\n" "chmod 755 ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup;";
+                    printf "%s\n\n" "${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n $(basename "${PACKAGE_CONFIG_FILE}");";
                     printf "%s\n\n" "printf "%s" \${?}";
                 } >| "${installation_script}";
 
