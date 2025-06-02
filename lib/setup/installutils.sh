@@ -294,12 +294,12 @@ function installLocalFiles()
             fi
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd ${INSTALL_PATH} || return 1; tar -xf - )";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${UNARCHIVE_PROGRAM} -c ${INSTALL_TAR} | ( cd ${INSTALL_PATH} || return 1; tar -xf - )";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            "${UNARCHIVE_PROGRAM}" -c "${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" | ( cd "${INSTALL_PATH}" || return 1; tar -xf - );
+            "${UNARCHIVE_PROGRAM}" -c "${INSTALL_TAR}" | ( cd "${INSTALL_PATH}" || return 1; tar -xf - );
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
