@@ -63,7 +63,7 @@ function buildSetupPackage()
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        ( cd "${source_path}" || return 1; tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md -cf - ./*) | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        tar -C "${source_path}" -cvf - ./* | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -176,7 +176,7 @@ function buildDeploymentPackage()
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        ( cd "${source_path}" || return 1; tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md -cf - ./*) | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        tar -C "${source_path}" -cvf - ./* | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
