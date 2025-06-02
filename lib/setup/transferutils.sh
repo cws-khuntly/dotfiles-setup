@@ -234,64 +234,64 @@ function transferLocalFiles()
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "File listing was null or empty. Please review logs.";
         fi
     else
-        for eligibleFile in "${files_to_process[@]}"; do
+        for eligible_file in "${files_to_process[@]}"; do
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "eligibleFile -> ${eligibleFile}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "eligible_file -> ${eligible_file}";
             fi
 
-            [[ -z "${eligibleFile}" ]] && continue;
+            [[ -z "${eligible_file}" ]] && continue;
 
-            target_file="$(awk -F "|" '{print $1}' <<< "${eligibleFile}")";
-            target_dir="$(awk -F "|" '{print $2}' <<< "${eligibleFile}")";
+            source_file="$(awk -F "|" '{print $1}' <<< "${eligible_file}")";
+            target_file="$(basename "$(awk -F "|" '{print $1}' <<< "${eligible_file}")")";
+            target_dir="$(awk -F "|" '{print $2}' <<< "${eligible_file}")";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_file -> ${source_file}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file -> ${target_file}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_dir -> ${target_dir}";
             fi
 
-            if [[ -n "${target_dir}" ]] && [[ -n "${target_file}" ]]; then
-                if [[ -r "${target_file}" ]]; then
+            if [[ -n "${source_file}" ]] && [[ -n "${target_file}" ]] && [[ -n "${target_dir}" ]]; then
+                if [[ -n "${source_file}" ]] && [[ -f "${source_file}" ]] && [[ -r "${source_file}" ]]; then
+                    [[ ! -d "${target_dir}" ]] && mkdir -pv "${target_dir}";
+                    [[ -f "${target_dir}/${target_file}" ]] && rm -f "${target_dir}/${target_file}";
+
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp ${target_file} ${target_dir}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp ${source_file} ${target_dir}/${target_file}";
                     fi
 
-                    if [[ ! -f "${target_file}" ]]; then
-                        [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                        cmd_output="$(cp "${target_file}" "${target_dir}")";
-                        ret_code="${?}";
+                    cmd_output="$(cp "${source_file}" "${target_dir}/${target_file}")";
+                    ret_code="${?}";
 
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cp/${target_file},${target_dir} -> ret_code -> ${ret_code}";
-                        fi
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cp / ${source_file} ${target_dir}/${target_file} -> ret_code -> ${ret_code}";
+                    fi
 
-                        if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
-                            (( error_count += 1 ))
+                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                        (( error_count += 1 ))
 
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to copy source file ${target_file} to ${target_dir}. Please review logs.";
-                            fi
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to copy source file ${source_file} to ${target_dir}/${target_file}. Please review logs.";
                         fi
                     fi
                 else
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file ${target_file} is not readable. Skipping entry.";
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Source file ${source_file} does not exist. Skipping entry.";
                     fi
 
                     continue;
                 fi
-            else
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file ${target_dir}/${target_file} was null or empty. Skipping entry.";
-                fi
 
-                continue;
+                (( file_counter += 1 ));
+
+                [[ -n "${target_dir}" ]] && unset -v target_dir;
+                [[ -n "${target_file}" ]] && unset -v target_file;
+                [[ -n "${source_file}" ]] && unset -v source_file;
+                [[ -n "${eligible_file}" ]] && unset -v eligible_file;
             fi
-
-            [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
-            [[ -n "${target_file}" ]] && unset -v target_file;
-            [[ -n "${target_dir}" ]] && unset -v target_dir;
         done
     fi
 
@@ -390,10 +390,10 @@ function transferRemoteFiles()
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Generating file cleanup file...";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-${TMPDIR}}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${WORK_DIR}";
     fi
 
-    sftp_send_file="$(mktemp --tmpdir="${USABLE_TMP_DIR:-${TMPDIR}}")";
+    sftp_send_file="$(mktemp --tmpdir="${WORK_DIR}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sftp_send_file -> ${sftp_send_file}";
@@ -423,48 +423,53 @@ function transferRemoteFiles()
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to generate the sFTP batch send file ${sftp_send_file}. Please ensure the file exists and can be written to.";
             fi
         else
-            for eligibleFile in "${files_to_process[@]}"; do
+            for eligible_file in "${files_to_process[@]}"; do
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "eligibleFile -> ${eligibleFile}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "eligible_file -> ${eligible_file}";
                 fi
 
-                [[ -z "${eligibleFile}" ]] && continue;
+                [[ -z "${eligible_file}" ]] && continue;
 
-                target_file="$(awk -F "|" '{print $1}' <<< "${eligibleFile}")";
-                target_dir="$(awk -F "|" '{print $2}' <<< "${eligibleFile}")";
+                source_file="$(awk -F "|" '{print $1}' <<< "${eligible_file}")";
+                target_file="$(basename "$(awk -F "|" '{print $1}' <<< "${eligible_file}")")";
+                target_dir="$(awk -F "|" '{print $2}' <<< "${eligible_file}")";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_file -> ${source_file}";
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file -> ${target_file}";
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_dir -> ${target_dir}";
                 fi
 
-                if [[ -n "${target_dir}" ]] && [[ -n "${target_file}" ]]; then
-                    if (( file_counter == 0 )); then
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" put ${target_file} ${target_dir:?} >| ${sftp_send_file}";
-                        fi
+                if [[ -n "${source_file}" ]] && [[ -n "${target_file}" ]] && [[ -n "${target_dir}" ]]; then
+                    if [[ -n "${source_file}" ]] && [[ -f "${source_file}" ]] && [[ -r "${source_file}" ]]; then
+                        if (( file_counter == 0 )); then
+                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" put ${target_file} ${target_dir} >| ${sftp_send_file}";
+                            fi
 
-                        { printf "%s %s %s\n" "put" "${target_file}" "${target_dir:?}"; } >| "${sftp_send_file}";
+                            { printf "%s %s %s\n" "put" "${source_file}" "${target_dir}/${target_file}"; } >| "${sftp_send_file}";
+                        else
+                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" put ${target_file} ${target_dir} >> ${sftp_send_file}";
+                            fi
+
+                            { printf "%s %s %s\n" "put" "${source_file}" "${target_dir}/${target_file}"; } >> "${sftp_send_file}";
+                        fi
                     else
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" put ${target_file} ${target_dir:?} >> ${sftp_send_file}";
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Source file ${source_file} does not exist. Skipping entry.";
                         fi
 
-                        { printf "%s %s %s\n" "put" "${target_file}" "${target_dir:?}"; } >> "${sftp_send_file}";
-                    fi
-                else
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file ${target_dir}/${target_file} was null or empty. Skipping entry.";
+                        continue;
                     fi
 
-                    continue;
+                    (( file_counter += 1 ));
+
+                    [[ -n "${target_dir}" ]] && unset -v target_dir;
+                    [[ -n "${target_file}" ]] && unset -v target_file;
+                    [[ -n "${source_file}" ]] && unset -v source_file;
+                    [[ -n "${eligible_file}" ]] && unset -v eligible_file;
                 fi
-
-                (( file_counter += 1 ));
-
-                [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
-                [[ -n "${target_file}" ]] && unset -v target_file;
-                [[ -n "${target_dir}" ]] && unset -v target_dir;
             done
 
             if [[ ! -s "${sftp_send_file}" ]] || (( file_counter != ${#files_to_process[*]} )); then
@@ -507,7 +512,7 @@ function transferRemoteFiles()
     ## cleanup
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="$(basename "${sftp_send_file}")|${USABLE_TMP_DIR:-${TMPDIR}}";
+    cleanup_list="$(basename "${sftp_send_file}")|${WORK_DIR}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";

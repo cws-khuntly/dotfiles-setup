@@ -58,12 +58,12 @@ function buildSetupPackage()
 
     if [[ -d "${source_path}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md --exclude log --exclude logs -C ${source_path} -cf - ./*";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ( cd ${source_path}; tar -C ${source_path} -cf - ./* ) | ${ARCHIVE_PROGRAM} > ${WORK_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         fi
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        tar -C "${source_path}" -cvf - ./* | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        ( cd "${source_path}" || exit 1; tar -C "${source_path}" -cf - ./* ) | ${ARCHIVE_PROGRAM} > "${WORK_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -77,7 +77,7 @@ function buildSetupPackage()
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while building the setup package. Please review logs.";
             fi
         else
-            if [[ ! -s "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
+            if [[ ! -s "${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
                 return_code=1;
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -85,7 +85,7 @@ function buildSetupPackage()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package ${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} created successfully.";
+                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package ${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} created successfully.";
                 fi
             fi
         fi
@@ -171,12 +171,12 @@ function buildDeploymentPackage()
 
     if [[ -d "${source_path}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: tar --exclude-vcs --exclude=README.md --exclude=LICENSE.md --exclude log --exclude logs -C ${source_path} -cf - ./*";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ( cd ${source_path}; tar -C ${source_path} -cf - ./* ) | ${ARCHIVE_PROGRAM} > ${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         fi
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        tar -C "${source_path}" -cvf - ./* | ${ARCHIVE_PROGRAM} > "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        ( cd "${source_path}" || exit 1; tar -C "${source_path}" -cf - ./* ) | ${ARCHIVE_PROGRAM} > "${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -190,7 +190,7 @@ function buildDeploymentPackage()
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while building the package. Please review logs.";
             fi
         else
-            if [[ ! -s "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
+            if [[ ! -s "${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}" ]]; then
                 return_code=1;
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -198,7 +198,7 @@ function buildDeploymentPackage()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package ${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} created successfully.";
+                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Package ${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} created successfully.";
                 fi
             fi
         fi

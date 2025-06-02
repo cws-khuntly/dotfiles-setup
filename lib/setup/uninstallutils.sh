@@ -209,12 +209,12 @@ function uninstallLocalFiles()
 
         ## clean up home directory first
         for entry in $(< "${INSTALL_CONF}"); do
+            [[ -z "${entry}" ]] && continue;
+            [[ "${entry}" =~ ^\# ]] && continue;
+
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
             fi
-
-            [[ -z "${entry}" ]] && continue;
-            [[ "${entry}" =~ ^\# ]] && continue;
 
             removable_entry="$(cut -d "|" -f 3 <<< "${entry}")";
 
@@ -452,10 +452,10 @@ function uninstallRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Generating file cleanup file...";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${USABLE_TMP_DIR:-${TMPDIR}}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${WORK_DIR}";
     fi
 
-    file_removal_script="$(mktemp --tmpdir="${USABLE_TMP_DIR:-${TMPDIR}}")";
+    file_removal_script="$(mktemp --tmpdir="${WORK_DIR}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_removal_script -> ${file_removal_script}";
@@ -482,12 +482,12 @@ function uninstallRemoteFiles()
 
             ## clean up home directory first
             for entry in $(< "${INSTALL_CONF}"); do
+                [[ -z "${entry}" ]] && continue;
+                [[ "${entry}" =~ ^\# ]] && continue;
+
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
                 fi
-
-                [[ -z "${entry}" ]] && continue;
-                [[ "${entry}" =~ ^\# ]] && continue;
 
                 entry_command="$(cut -d "|" -f 1 <<< "${entry}")";
                 removable_entry="$(cut -d "|" -f 3 <<< "${entry}")";
@@ -595,7 +595,7 @@ function uninstallRemoteFiles()
     ## cleanup (local)
     [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
 
-    cleanup_list="$(basename "${file_removal_script}")|${USABLE_TMP_DIR:-${TMPDIR}}";
+    cleanup_list="$(basename "${file_removal_script}")|${WORK_DIR}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";

@@ -26,7 +26,7 @@ declare -i RETURN_CODE=0;
 declare CNAME="$(basename "${BASH_SOURCE[0]}")";
 declare FUNCTION_NAME="${CNAME}#startup";
 declare SCRIPT_ROOT="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && printf "%s" "${PWD}")")";
-declare -x SETUP_ROOT="${SCRIPT_ROOT}";
+declare SETUP_ROOT="${SCRIPT_ROOT}";
 declare CONFIG_FILE="${SETUP_ROOT}/config/$(basename "${CNAME}" ".sh")/$(basename "${CNAME}" ".sh").properties";
 
 if [[ -r "${SETUP_ROOT}/lib/system/logging.sh" ]] && [[ -s "$SETUP_ROOT}/lib/system/logging.sh" ]]; then
@@ -81,27 +81,46 @@ fi
 #
 # load the system libs
 #
-if [[ -d "${SETUP_ROOT}/lib/system" ]]; then
+SYS_LIB_PATHS=( "${SETUP_ROOT}/lib/system" );
+
+if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_ROOT -> ${SETUP_ROOT}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SYS_LIB_PATHS -> ${SYS_LIB_PATHS[*]}";
+fi
+
+for SYS_LIB_PATH in "${SYS_LIB_PATHS[@]}"; do
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found library directory ${SETUP_ROOT}/lib/system";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SYS_LIB_PATH -> ${SYS_LIB_PATH}";
     fi
 
-    for SYSLIB in "${SETUP_ROOT}/lib/system"/*.sh; do
+    mapfile -t FILE_LIST < <(ls -ltr "${SYS_LIB_PATH}"/*.sh | awk '{print $NF}');
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
+    fi
+
+    if [[ -z "${FILE_LIST[*]}" ]] || (( ${#FILE_LIST[*]} == 0 )); then continue; fi
+
+    for FILE in "${FILE_LIST[@]}"; do
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${SYSLIB}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
         fi
 
-        [[ -z "${SYSLIB}" ]] && continue;
-        [[ "${SYSLIB}" =~ ^\# ]] && continue;
+        [[ -z "${FILE}" ]] && continue;
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${SYS_LIB_PATH}/${FILE}";
+        fi
 
         # shellcheck source=/dev/null
-        if [[ -r "${SYSLIB}" ]] && [[ -s "${SYSLIB}" ]] && \
-            [[ "$(basename "${SYSLIB}")" != "cws-profile.sh" ]] && [[ "$(basename "${SYSLIB}")" != "logging.sh" ]]; then
-            # shellcheck source=/dev/null
-            source "${SYSLIB}";
-        fi
+        source "${FILE}";
+
+        [[ -n "${FILE}" ]] && unset -v FILE;
     done
-fi
+
+    [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
+    [[ -n "${SYS_LIB_PATH}" ]] && unset -v SYS_LIB_PATH;
+done
 
 #======  FUNCTION  ============================================================
 #          NAME:  main
@@ -960,24 +979,45 @@ else
         FUNCTION_NAME="${CNAME}#loadScriptLibs";
 
         ## bring in any library scripts
-        for LIBENTRY in "${SETUP_ROOT}/lib/$(basename "${CNAME}" ".sh")"/*.sh; do
+        SETUP_LIB_PATHS=( "${SETUP_ROOT}/lib/$(basename "${CNAME}" ".sh")" );
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_ROOT -> ${SETUP_ROOT}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATHS -> ${SETUP_LIB_PATHS[*]}";
+        fi
+
+        for SETUP_LIB_PATH in "${SETUP_LIB_PATHS[@]}"; do
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Library ${LIBENTRY}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATH -> ${SETUP_LIB_PATH}";
             fi
 
-            [[ -z "${LIBENTRY}" ]] && continue;
-            [[ "${LIBENTRY}" =~ ^\# ]] && continue;
+            mapfile -t FILE_LIST < <(ls -ltr "${SETUP_LIB_PATH}"/*.sh | awk '{print $NF}');
 
-            if [[ -r "${LIBENTRY}" ]] && [[ -s "${LIBENTRY}" ]]; then
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
+            fi
+
+            if [[ -z "${FILE_LIST[*]}" ]] || (( ${#FILE_LIST[*]} == 0 )); then continue; fi
+
+            for FILE in "${FILE_LIST[@]}"; do
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${LIBENTRY}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+                fi
+
+                [[ -z "${FILE}" ]] && continue;
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
                 fi
 
                 # shellcheck source=/dev/null
-                source "${LIBENTRY}";
-            fi
+                source "${FILE}";
 
-            [[ -n "${LIBENTRY}" ]] && unset -v LIBENTRY;
+                [[ -n "${FILE}" ]] && unset -v FILE;
+            done
+
+            [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
+            [[ -n "${SETUP_LIB_PATH}" ]] && unset -v SETUP_LIB_PATH;
         done
 
         FUNCTION_NAME="${CNAME}#buildTargetList";
@@ -1009,20 +1049,6 @@ else
         if [[ -n "${TARGET_ENTRIES[*]}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ENTRIES -> ${TARGET_ENTRIES[*]}";
-            fi
-
-            [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
-
-            FUNCTION_NAME="${CNAME}#generateSshKeys";
-
-            generateSshKeys;
-            RET_CODE="${?}";
-
-            if [[ -n "${RET_CODE}" ]] && (( RET_CODE != 0 )); then
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH key generation failed. Return code -> ${RET_CODE}. This may prevent processing from completing.";
-                    writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SSH key generation failed. Return code -> ${RET_CODE}. This may prevent processing from completing.";
-                fi
             fi
 
             FUNCTION_NAME="${CNAME}#processTargetEntries";
@@ -1121,5 +1147,6 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${GPG_OPTION_FILE}" ]] && unset -v GPG_OPTION_FILE;
 [[ -n "${IS_GPG_AVAILABLE}" ]] && unset -v IS_GPG_AVAILABLE;
 [[ -n "${SERVER_LIST}" ]] && unset -v SERVER_LIST;
+[[ -n "${SYS_LIB_PATHS[*]}" ]] && unset -v SYS_LIB_PATHS;
 
 exit "${RETURN_CODE}";
