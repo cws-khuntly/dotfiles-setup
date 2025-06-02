@@ -185,7 +185,8 @@ function runInstallRemoteFiles()
         ## transfer
         [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
 
-        transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR}/${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        transfer_file_list+="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}"
