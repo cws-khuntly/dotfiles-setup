@@ -299,7 +299,7 @@ function installLocalFiles()
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            "${UNARCHIVE_PROGRAM}" -c "${INSTALL_TAR}" | ( cd "${INSTALL_PATH}" || return 1; tar -xf - );
+            "${UNARCHIVE_PROGRAM}" -dc "${INSTALL_TAR}" | tar xf - -C "${INSTALL_PATH}";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
