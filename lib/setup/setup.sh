@@ -187,6 +187,7 @@ function runInstallRemoteFiles()
 
         transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
         transfer_file_list+="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+        transfer_file_list+="${PACKAGE_CONFIG}|${DEPLOY_TO_DIR}/$(basename "${PACKAGE_CONFIG}")";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}"
@@ -403,9 +404,8 @@ function runDeployLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-	transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
-	transfer_file_list+="${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${WORKING_CONFIG_FILE}"),";
-	transfer_file_list+="${PACKAGE_CONFIG_FILE}|${DEPLOY_TO_DIR}/$(basename "${PACKAGE_CONFIG_FILE}")";
+    transfer_file_list="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}";
+    transfer_file_list+="${PACKAGE_CONFIG}|${DEPLOY_TO_DIR}/$(basename "${PACKAGE_CONFIG}")";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}";
