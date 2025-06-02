@@ -283,11 +283,11 @@ function installLocalFiles()
                     ( cd "${INSTALL_PATH}" || return 1; tar -cf - ./*) | ${ARCHIVE_PROGRAM} > "$(dirname "${INSTALL_PATH}")/${PACKAGE_NAME}.${BACKUP_DATE_STAMP}.${ARCHIVE_FILE_EXTENSION}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${INSTALL_PATH}/*";
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${INSTALL_PATH:?}/*";
                     fi
                 fi
 
-                rm -rf "${INSTALL_PATH}"/*;
+                rm -rf "${INSTALL_PATH:?}"/*;
             fi
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -339,18 +339,23 @@ function installLocalFiles()
 
                         continue;
                     else
+                        if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -d "${entry_target}" ]]; then
+                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${entry_target:?}";
+                            fi
+
+                            [[ -n "${cname}" ]] && unset -v cname;
+                            [[ -n "${function_name}" ]] && unset -v function_name;
+
+                            cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${entry_target:?}";
+
+                            cname="setup.sh";
+                            function_name="${cname}#${FUNCNAME[0]}";
+                        fi
+
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${entry_target}";
-                        fi
-
-                        if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -d "${entry_target}" ]]; then
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing directory ${entry_target}...";
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${entry_target}";
-                            fi
-
-                            rm -rf "${entry_target}" 2>/dev/null;
                         fi
 
                         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
@@ -465,14 +470,18 @@ function installLocalFiles()
                             continue;
                             ;;
                         "ln")
-                            if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then
+                            if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -d "${entry_target}" ]]; then
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing symbolic link ${entry_target}...";
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: unlink \$(eval printf \"%s\" ${entry_target})";
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${entry_target}";
                                 fi
 
-                                unlink "$(eval printf "%s" "${entry_target}")" 2>/dev/null;
-                                rm -f "$(eval printf "%s" "${entry_target}")" 2>/dev/null;
+                                [[ -n "${cname}" ]] && unset -v cname;
+                                [[ -n "${function_name}" ]] && unset -v function_name;
+
+                                cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_target}")";
+
+                                cname="setup.sh";
+                                function_name="${cname}#${FUNCNAME[0]}";
                             fi
 
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -536,13 +545,18 @@ function installLocalFiles()
                             fi
                             ;;
                         "cp")
-                            if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then
+                            if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -d "${entry_target}" ]]; then
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing file ${entry_target}...";
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f \$(eval printf \"%s\" ${entry_target})";
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${entry_target}";
                                 fi
 
-                                rm -f "$(eval printf "%s" "${entry_target}")" 2>/dev/null;
+                                [[ -n "${cname}" ]] && unset -v cname;
+                                [[ -n "${function_name}" ]] && unset -v function_name;
+
+                                cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_target}")";
+
+                                cname="setup.sh";
+                                function_name="${cname}#${FUNCNAME[0]}";
                             fi
 
                             if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then

@@ -234,12 +234,12 @@ function uninstallLocalFiles()
                 if [[ -d "${removable_entry}" ]]; then
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing directory ${removable_entry}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${removable_entry}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${removable_entry:?}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output="$(rm -rf "${removable_entry}")";
+                    cmd_output="$(rm -rf "${removable_entry:?}")";
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -336,12 +336,12 @@ function uninstallLocalFiles()
         if [[ -d "${INSTALL_PATH}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing installation directory ${INSTALL_PATH}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${INSTALL_PATH}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${INSTALL_PATH:?}";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output="$(rm -rf "${INSTALL_PATH}")";
+            cmd_output="$(rm -rf "${INSTALL_PATH:?}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -425,7 +425,7 @@ function uninstallRemoteFiles()
     local entry_command;
     local removable_entry;
     local cmd_output;
-    local cleanup_list;
+    local cleanup_file_list;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -512,7 +512,7 @@ function uninstallRemoteFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting up to remove directory ${removable_entry}";
                             fi
 
-                            { printf "%s %s %s\n" "-" "rm -rf" "${removable_entry}"; } >> "${file_removal_script}";
+                            { printf "%s %s %s\n" "-" "rm -rf" "${removable_entry:?}"; } >> "${file_removal_script}";
                             ;;
                         "ln")
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -526,7 +526,7 @@ function uninstallRemoteFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting up to remove file ${removable_entry}";
                             fi
 
-                            { printf "%s %s %s\n" "-" "rm -f" "${removable_entry}"; } >> "${file_removal_script}";
+                            { printf "%s %s %s\n" "-" "rm -f" "${removable_entry:?}"; } >> "${file_removal_script}";
                             ;;
                         *)
                             (( error_count += 1 ));
@@ -592,39 +592,42 @@ function uninstallRemoteFiles()
         fi
     fi
 
-    ## cleanup (local)
-    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
+    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    cleanup_list="$(basename "${file_removal_script}")|${WORK_DIR}";
+    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+
+    cleanup_file_list="${file_removal_script}"
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_list -> ${cleanup_list}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_list}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_file_list -> ${cleanup_file_list}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_file_list}";
     fi
 
     [[ -n "${cname}" ]] && unset -v cname;
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-    cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_list}";
+    cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_file_list}";
     ret_code="${?}";
 
     cname="uninstallutils.sh";
     function_name="${cname}#${FUNCNAME[0]}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles -> ret_code -> ${ret_code}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles / ${CLEANUP_LOCATION_LOCAL} -> ret_code -> ${ret_code}";
     fi
 
     if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute cleanupFiles with cleanup type of ${CLEANUP_LOCATION_LOCAL}. Please review logs.";
+            writeLogEntry "FILE" "WARN" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while executing cleanupFiles ${CLEANUP_LOCATION_LOCAL}. Please review logs.";
+        fi
+    else
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles ${CLEANUP_LOCATION_LOCAL} completed successfully.";
         fi
     fi
-
-    if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
-
-    [[ -f "${file_removal_script}" ]] && rm -f "${file_removal_script}";
 
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
@@ -635,7 +638,7 @@ function uninstallRemoteFiles()
     [[ -n "${entry_command}" ]] && unset -v entry_command;
     [[ -n "${removable_entry}" ]] && unset -v removable_entry;
     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-    [[ -n "${cleanup_list}" ]] && unset -v cleanup_list;
+    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";

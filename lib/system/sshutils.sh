@@ -259,7 +259,8 @@ function generateSshKeys()
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$("${SSH_KEYGEN_PROGRAM}" -b "${ssh_key_size}" -C '' -f "${WORK_DIR}/${ssh_key_filename}" -N '' -t "${ssh_key_type}")";
+                [[ "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$("${SSH_KEYGEN_PROGRAM}" -b "${ssh_key_size}" -C '' -f "${WORK_DIR}/${ssh_key_filename}" -N '' -t "${ssh_key_type}")";
+                [[ ! "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$("${SSH_KEYGEN_PROGRAM}" -C '' -f "${WORK_DIR}/${ssh_key_filename}" -N '' -t "${ssh_key_type}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
