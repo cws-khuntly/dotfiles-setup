@@ -70,8 +70,8 @@ function runDeployLocalFiles()
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_LOCAL} ${transfer_file_list}";
 	fi
 
-	[[ -n "${function_name}" ]] && unset -v function_name;
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+	[[ -n "${function_name}" ]] && unset function_name;
+	[[ -n "${ret_code}" ]] && unset ret_code;
 
 	transferFiles "${TRANSFER_LOCATION_LOCAL}" "${transfer_file_list}";
 	ret_code="${?}";
@@ -96,9 +96,9 @@ function runDeployLocalFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+    [[ -n "${error_count}" ]] && unset error_count;
+    [[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${transfer_file_list}" ]] && unset transfer_file_list;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -113,11 +113,11 @@ function runDeployLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -183,9 +183,9 @@ function runDeployRemoteFiles()
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${ssh_port_number} ${target_user} ${DEPLOY_TO_DIR}";
 	fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-	[[ -n "${function_name}" ]] && unset -v function_name;
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+	[[ -n "${function_name}" ]] && unset function_name;
+	[[ -n "${ret_code}" ]] && unset ret_code;
 
 	transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${ssh_port_number}" "${target_user}" "${DEPLOY_TO_DIR}";
 	ret_code="${?}";
@@ -211,12 +211,12 @@ function runDeployRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-	[[ -n "${error_count}" ]] && unset -v error_count;
-	[[ -n "${target_host}" ]] && unset -v target_host;
-	[[ -n "${ssh_port_number}" ]] && unset -v ssh_port_number;
-	[[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+    [[ -n "${ret_code}" ]] && unset ret_code;
+	[[ -n "${error_count}" ]] && unset error_count;
+	[[ -n "${target_host}" ]] && unset target_host;
+	[[ -n "${ssh_port_number}" ]] && unset ssh_port_number;
+	[[ -n "${target_user}" ]] && unset target_user;
+    [[ -n "${transfer_file_list}" ]] && unset transfer_file_list;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -231,11 +231,11 @@ function runDeployRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -280,9 +280,9 @@ function runInstallLocalFiles()
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installFiles ${INSTALL_LOCATION_LOCAL} ${INSTALL_TAR}";
 	fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-	[[ -n "${function_name}" ]] && unset -v function_name;
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+	[[ -n "${function_name}" ]] && unset function_name;
+	[[ -n "${ret_code}" ]] && unset ret_code;
 
 	installFiles "${INSTALL_LOCATION_LOCAL}" "${INSTALL_TAR}";
 	ret_code="${?}";
@@ -308,7 +308,7 @@ function runInstallLocalFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+    [[ -n "${cleanup_file_list}" ]] && unset cleanup_file_list;
 
     cleanup_file_list="${INSTALL_TAR},";
     cleanup_file_list+="${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
@@ -319,9 +319,9 @@ function runInstallLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_file_list}";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${ret_code}" ]] && unset ret_code;
 
     cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_file_list}";
     ret_code="${?}";
@@ -345,9 +345,9 @@ function runInstallLocalFiles()
         fi
     fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+    [[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${error_count}" ]] && unset error_count;
+    [[ -n "${cleanup_file_list}" ]] && unset cleanup_file_list;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -362,11 +362,11 @@ function runInstallLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -427,9 +427,9 @@ function runInstallRemoteFiles()
 		 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: buildPackage";
 	fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-	[[ -n "${function_name}" ]] && unset -v function_name;
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+	[[ -n "${function_name}" ]] && unset function_name;
+	[[ -n "${ret_code}" ]] && unset ret_code;
 
 	buildSetupPackage;
 	ret_code="${?}";
@@ -449,7 +449,7 @@ function runInstallRemoteFiles()
         fi
     else
         ## transfer
-        [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+        [[ -n "${transfer_file_list}" ]] && unset transfer_file_list;
 
         transfer_file_list="${WORK_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
         transfer_file_list+="${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
@@ -461,9 +461,9 @@ function runInstallRemoteFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}";
         fi
 
-        [[ -n "${cname}" ]] && unset -v cname;
-        [[ -n "${function_name}" ]] && unset -v function_name;
-        [[ -n "${ret_code}" ]] && unset -v ret_code;
+        [[ -n "${cname}" ]] && unset cname;
+        [[ -n "${function_name}" ]] && unset function_name;
+        [[ -n "${ret_code}" ]] && unset ret_code;
 
         transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
         ret_code="${?}";
@@ -531,7 +531,7 @@ function runInstallRemoteFiles()
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to populate the installation script ${installation_script}. Please ensure the file exists and can be written to.";
                     fi
                 else
-                    [[ -n "${transfer_file_list}" ]] && unset -v transfer_file_list;
+                    [[ -n "${transfer_file_list}" ]] && unset transfer_file_list;
 
                     transfer_file_list="${installation_script}|${DEPLOY_TO_DIR}/$(basename "${installation_script}")";
 
@@ -541,9 +541,9 @@ function runInstallRemoteFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user}" "${DEPLOY_TO_DIR}";
                     fi
 
-                    [[ -n "${cname}" ]] && unset -v cname;
-                    [[ -n "${function_name}" ]] && unset -v function_name;
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -n "${cname}" ]] && unset cname;
+                    [[ -n "${function_name}" ]] && unset function_name;
+                    [[ -n "${ret_code}" ]] && unset ret_code;
 
                     transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
                     ret_code="${?}";
@@ -567,9 +567,9 @@ function runInstallRemoteFiles()
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installRemoteFiles ${target_host} ${target_port} ${target_user} ${installation_script}";
                         fi
 
-                        [[ -n "${cname}" ]] && unset -v cname;
-                        [[ -n "${function_name}" ]] && unset -v function_name;
-                        [[ -n "${ret_code}" ]] && unset -v ret_code;
+                        [[ -n "${cname}" ]] && unset cname;
+                        [[ -n "${function_name}" ]] && unset function_name;
+                        [[ -n "${ret_code}" ]] && unset ret_code;
 
                         install_response="$(installRemoteFiles "${target_host}" "${target_port}" "${target_user}" "${installation_script}")";
                         ret_code="${?}";
@@ -601,11 +601,11 @@ function runInstallRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+    [[ -n "${cleanup_file_list}" ]] && unset cleanup_file_list;
 
-    [[ -n "${cname}" ]] && unset -v cname;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${ret_code}" ]] && unset ret_code;
 
     cleanup_file_list="${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
     cleanup_file_list+="${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
@@ -633,7 +633,7 @@ function runInstallRemoteFiles()
         fi
     fi
 
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+    [[ -n "${cleanup_file_list}" ]] && unset cleanup_file_list;
 
     cleanup_file_list="${installation_script},";
     cleanup_file_list+="${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
@@ -644,9 +644,9 @@ function runInstallRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_file_list}";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${ret_code}" ]] && unset ret_code;
 
     cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_file_list}";
     ret_code="${?}";
@@ -670,14 +670,14 @@ function runInstallRemoteFiles()
         fi
     fi
 
-    [[ -n "${target_host}" ]] && unset -v target_host;
-	[[ -n "${error_count}" ]] && unset -v error_count;
-	[[ -n "${target_hostname}" ]] && unset -v target_hostname;
-	[[ -n "${target_ssh_port}" ]] && unset -v target_ssh_port;
-	[[ -n "${target_ssh_user}" ]] && unset -v target_ssh_user;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${installation_script}" ]] && unset -v installation_script;
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+    [[ -n "${target_host}" ]] && unset target_host;
+	[[ -n "${error_count}" ]] && unset error_count;
+	[[ -n "${target_hostname}" ]] && unset target_hostname;
+	[[ -n "${target_ssh_port}" ]] && unset target_ssh_port;
+	[[ -n "${target_ssh_user}" ]] && unset target_ssh_user;
+    [[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${installation_script}" ]] && unset installation_script;
+    [[ -n "${cleanup_file_list}" ]] && unset cleanup_file_list;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -692,11 +692,11 @@ function runInstallRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -737,9 +737,9 @@ function runRemoveLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-	[[ -n "${function_name}" ]] && unset -v function_name;
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+	[[ -n "${function_name}" ]] && unset function_name;
+	[[ -n "${ret_code}" ]] && unset ret_code;
 
 	uninstallFiles "${UNINSTALL_LOCATION_LOCAL}";
 	ret_code="${?}";
@@ -765,7 +765,7 @@ function runRemoveLocalFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${ret_code}" ]] && unset ret_code;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -780,11 +780,11 @@ function runRemoveLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -841,9 +841,9 @@ function runRemoveRemoteFiles()
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: uninstallFiles ${UNINSTALL_LOCATION_REMOTE} ${target_host} ${ssh_port_number} ${target_user}";
 	fi
 
-    [[ -n "${cname}" ]] && unset -v cname;
-	[[ -n "${function_name}" ]] && unset -v function_name;
-	[[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${cname}" ]] && unset cname;
+	[[ -n "${function_name}" ]] && unset function_name;
+	[[ -n "${ret_code}" ]] && unset ret_code;
 
 	uninstallFiles "${UNINSTALL_LOCATION_REMOTE}" "${target_host}" "${ssh_port_number}" "${target_user}";
 	ret_code="${?}";
@@ -869,10 +869,10 @@ function runRemoveRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${target_host}" ]] && unset -v target_host;
-	[[ -n "${ssh_port_number}" ]] && unset -v ssh_port_number;
-	[[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
+    [[ -n "${target_host}" ]] && unset target_host;
+	[[ -n "${ssh_port_number}" ]] && unset ssh_port_number;
+	[[ -n "${target_user}" ]] && unset target_user;
+    [[ -n "${ret_code}" ]] && unset ret_code;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -887,11 +887,11 @@ function runRemoveRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

@@ -78,9 +78,9 @@ function cleanupFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupLocalFiles ${cleanup_file_list}";
                     fi
 
-                    [[ -n "${cname}" ]] && unset -v cname;
-                    [[ -n "${function_name}" ]] && unset -v function_name;
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -n "${cname}" ]] && unset cname;
+                    [[ -n "${function_name}" ]] && unset function_name;
+                    [[ -n "${ret_code}" ]] && unset ret_code;
 
                     cleanupLocalFiles "${cleanup_file_list}";
                     ret_code="${?}";
@@ -118,9 +118,9 @@ function cleanupFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupRemoteFiles ${cleanup_file_list} ${target_host} ${target_port} ${target_user}";
                     fi
 
-                    [[ -n "${cname}" ]] && unset -v cname;
-                    [[ -n "${function_name}" ]] && unset -v function_name;
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -n "${cname}" ]] && unset cname;
+                    [[ -n "${function_name}" ]] && unset function_name;
+                    [[ -n "${ret_code}" ]] && unset ret_code;
 
                     cleanupRemoteFiles "${cleanup_file_list}" "${target_host}" "${target_port}" "${target_user}"
                     ret_code="${?}";
@@ -159,13 +159,13 @@ function cleanupFiles()
         if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
     fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${operating_mode}" ]] && unset -v operating_mode;
-    [[ -n "${cleanup_file_list}" ]] && unset -v forcleanup_file_listce_exec;
-    [[ -n "${target_host}" ]] && unset -v target_host;
-    [[ -n "${target_port}" ]] && unset -v target_port;
-    [[ -n "${target_user}" ]] && unset -v target_user;
+    [[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${error_count}" ]] && unset error_count;
+    [[ -n "${operating_mode}" ]] && unset operating_mode;
+    [[ -n "${cleanup_file_list}" ]] && unset forcleanup_file_listce_exec;
+    [[ -n "${target_host}" ]] && unset target_host;
+    [[ -n "${target_port}" ]] && unset target_port;
+    [[ -n "${target_user}" ]] && unset target_user;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -175,11 +175,11 @@ function cleanupFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -255,8 +255,8 @@ function cleanupLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${eligible_file:?}";
             fi
 
-            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
+            [[ -n "${cmd_output}" ]] && unset cmd_output;
+            [[ -n "${ret_code}" ]] && unset ret_code;
 
             cmd_output="$(rm -rf "${eligible_file:?}")";
             ret_code="${?}";
@@ -290,8 +290,8 @@ function cleanupLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${eligible_file:?}";
             fi
 
-            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
+            [[ -n "${cmd_output}" ]] && unset cmd_output;
+            [[ -n "${ret_code}" ]] && unset ret_code;
 
             cmd_output="$(rm -f "${eligible_file:?}")";
             ret_code="${?}";
@@ -325,8 +325,8 @@ function cleanupLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: unlink ${eligible_file:?}";
             fi
 
-            [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
+            [[ -n "${cmd_output}" ]] && unset cmd_output;
+            [[ -n "${ret_code}" ]] && unset ret_code;
 
             cmd_output="$(unlink "${eligible_file:?}")";
             ret_code="${?}";
@@ -357,21 +357,21 @@ function cleanupLocalFiles()
             fi
         fi
 
-        [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
-        [[ -n "${targetFile}" ]] && unset -v targetFile;
-        [[ -n "${ret_code}" ]] && unset -v ret_code;
+        [[ -n "${eligibleFile}" ]] && unset eligibleFile;
+        [[ -n "${targetFile}" ]] && unset targetFile;
+        [[ -n "${ret_code}" ]] && unset ret_code;
     done
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${requested_files}" ]] && unset -v requested_files;
-    [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
-    [[ -n "${targetFile}" ]] && unset -v targetFile;
-    [[ -n "${targetDir}" ]] && unset -v targetDir;
-    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-    [[ -n "${files_to_process[*]}" ]] && unset -v files_to_process;
+    [[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${error_count}" ]] && unset error_count;
+    [[ -n "${requested_files}" ]] && unset requested_files;
+    [[ -n "${eligibleFile}" ]] && unset eligibleFile;
+    [[ -n "${targetFile}" ]] && unset targetFile;
+    [[ -n "${targetDir}" ]] && unset targetDir;
+    [[ -n "${cmd_output}" ]] && unset cmd_output;
+    [[ -n "${files_to_process[*]}" ]] && unset files_to_process;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -381,11 +381,11 @@ function cleanupLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -465,7 +465,7 @@ function cleanupRemoteFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cat /dev/null >| ${file_cleanup_file}";
         fi
 
-        [[ -n "${ret_code}" ]] && unset -v ret_code;
+        [[ -n "${ret_code}" ]] && unset ret_code;
 
         cat /dev/null >| "${file_cleanup_file}";
         ret_code="${?}";
@@ -509,7 +509,7 @@ function cleanupRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_counter -> ${file_counter}";
                 fi
 
-                [[ -n "${eligible_file}" ]] && unset -v eligible_file;
+                [[ -n "${eligible_file}" ]] && unset eligible_file;
             done
 
             if [[ ! -s "${file_cleanup_file}" ]]; then
@@ -524,9 +524,9 @@ function cleanupRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${file_cleanup_file} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}";
                 fi
 
-                [[ -n "${cname}" ]] && unset -v cname;
-                [[ -n "${function_name}" ]] && unset -v function_name;
-                [[ -n "${ret_code}" ]] && unset -v ret_code;
+                [[ -n "${cname}" ]] && unset cname;
+                [[ -n "${function_name}" ]] && unset function_name;
+                [[ -n "${ret_code}" ]] && unset ret_code;
 
                 transferFiles "${TRANSFER_LOCATION_REMOTE}" "${file_cleanup_file}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
                 ret_code="${?}";
@@ -557,15 +557,15 @@ function cleanupRemoteFiles()
 
     [[ -f "${file_cleanup_file}" ]] && rm -i --preserve-root -f "${file_cleanup_file}";
 
-    [[ -n "${file_counter}" ]] && unset -v file_counter;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-    [[ -n "${error_count}" ]] && unset -v error_count;
-    [[ -n "${requested_files[*]}" ]] && unset -v requested_files;
-    [[ -n "${target_host}" ]] && unset -v target_host;
-    [[ -n "${target_port}" ]] && unset -v target_port;
-    [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${file_cleanup_file}" ]] && unset -v file_cleanup_file;
-    [[ -n "${eligible_file}" ]] && unset -v eligible_file;
+    [[ -n "${file_counter}" ]] && unset file_counter;
+    [[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${error_count}" ]] && unset error_count;
+    [[ -n "${requested_files[*]}" ]] && unset requested_files;
+    [[ -n "${target_host}" ]] && unset target_host;
+    [[ -n "${target_port}" ]] && unset target_port;
+    [[ -n "${target_user}" ]] && unset target_user;
+    [[ -n "${file_cleanup_file}" ]] && unset file_cleanup_file;
+    [[ -n "${eligible_file}" ]] && unset eligible_file;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -575,11 +575,11 @@ function cleanupRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset -v start_epoch;
-    [[ -n "${end_epoch}" ]] && unset -v end_epoch;
-    [[ -n "${runtime}" ]] && unset -v runtime;
-    [[ -n "${function_name}" ]] && unset -v function_name;
-    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${start_epoch}" ]] && unset start_epoch;
+    [[ -n "${end_epoch}" ]] && unset end_epoch;
+    [[ -n "${runtime}" ]] && unset runtime;
+    [[ -n "${function_name}" ]] && unset function_name;
+    [[ -n "${cname}" ]] && unset cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
