@@ -257,12 +257,12 @@ function transferLocalFiles()
                     [[ -f "${target_dir}/${target_file}" ]] && rm -i --preserve-root -f "${target_dir}/${target_file}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp ${source_file} ${target_dir}/${target_file}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp -i ${source_file} ${target_dir}/${target_file}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output="$(cp "${source_file}" "${target_dir}/${target_file}")";
+                    cmd_output="$(cp -i "${source_file}" "${target_dir}/${target_file}")";
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
