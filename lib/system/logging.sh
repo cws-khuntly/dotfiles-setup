@@ -54,7 +54,7 @@ function usage()
 
     local cname="logging.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
-    local return_code=3;
+    local -i return_code=3;
 
     printf "%s %s\n" "${function_name}" "Write a log message to a provided target." >&2;
     printf "%s %s\n" "Usage: ${function_name}" "[ <options> ]" >&2;

@@ -143,11 +143,11 @@ function validateAndCopyKeysForHost()
     local -i return_code=0;
     local -i error_count=0;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_transport;
     local target_user;
     local returned_host;
-    local returned_port;
+    local -i returned_port;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -310,8 +310,8 @@ function waitForProcessFile()
     local -i error_count=0;
     local -i retry_counter=0;
     local watch_file;
-    local sleep_time;
-    local retry_count;
+    local -i sleep_time;
+    local -i retry_count;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;

@@ -32,11 +32,11 @@ function getHostKeys()
     local -i return_code=0;
     local -i error_count=0;
     local does_key_exist;
-    local ret_code;
+    local -i ret_code;
     local remote_ssh_version;
     local remote_ssh_key;
     local target_host;
-    local target_port;
+    local -i target_port;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -366,7 +366,7 @@ function copyKeysToTarget()
     local -i error_count=0;
     local continue_exec="${_TRUE}";
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local keyfile;
     local sshpass;
@@ -512,7 +512,7 @@ function fssh()
 	local -i ret_code;
     local sshconfig;
     local target_host;
-    local target_port;
+    local -i target_port;
 	local target_user;
 	local run_cmd;
 	local cmd_output;
@@ -626,7 +626,7 @@ function fsftp()
 	local -i ret_code;
     local sshconfig;
     local target_host;
-    local target_port;
+    local -i target_port;
 	local target_user;
 	local sftpfile;
 	local cmd_output;

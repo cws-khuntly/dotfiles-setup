@@ -334,8 +334,8 @@ function watchForFile()
     local -i error_count=0;
     local -i retry_counter=0;
     local watch_file;
-    local sleep_time;
-    local retry_count;
+    local -i sleep_time;
+    local -i retry_count;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -426,10 +426,10 @@ function watchForNetworkPort()
     local -i ret_code=0;
     local -i return_code=0;
     local -i error_count=0;
-    local retry_counter=0;
+    local -i retry_counter=0;
     local watch_file;
-    local sleep_time;
-    local retry_count;
+    local -i sleep_time;
+    local -i retry_count;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;

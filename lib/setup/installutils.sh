@@ -34,7 +34,7 @@ function installFiles()
     local -i error_count=0;
     local install_mode;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local entry;
     local entry_target;
@@ -694,11 +694,11 @@ function installRemoteFiles()
 
     local cname="installutils.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
-    local ret_code;
+    local -i ret_code;
     local -i return_code=0;
     local -i error_count=0;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local installation_script;
     local install_response;

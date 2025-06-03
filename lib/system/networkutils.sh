@@ -34,10 +34,10 @@ function validateHostAvailability()
     local -i error_count=0;
     local target_transport;
     local target_host;
-    local target_port;
+    local -i target_port;
     local validatedHostName;
     local validatedHostAddress;
-    local validatedPortNumber;
+    local -i validatedPortNumber;
     local returned_data;
     local -i start_epoch;
     local -i end_epoch;
@@ -536,8 +536,8 @@ function checkForValidPort()
     local -i return_code=0;
     local -i error_count=0;
     local -i ret_code=0;
-    local checkPortNumber;
-    local returnedPortNumber;
+    local -i checkPortNumber;
+    local -i returnedPortNumber;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -654,7 +654,7 @@ function checkIfHostIsAlive()
     local -i ret_code=0;
     local checkNetworkType;
     local checkNetworkName;
-    local checkNetworkPort;
+    local -i checkNetworkPort;
     local isHostAvailable;
     local -i start_epoch;
     local -i end_epoch;

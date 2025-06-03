@@ -36,7 +36,7 @@ function transferFiles()
     local operating_mode;
     local files_to_process;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local -i start_epoch;
     local -i end_epoch;
@@ -349,7 +349,7 @@ function transferRemoteFiles()
     local -i error_count=0;
     local file_list;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local sftp_send_file;
     local files_to_process;

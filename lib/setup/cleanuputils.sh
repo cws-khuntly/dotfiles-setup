@@ -35,7 +35,7 @@ function cleanupFiles()
     local operating_mode;
     local cleanup_file_list;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local -i start_epoch;
     local -i start_epoch;
@@ -412,7 +412,7 @@ function cleanupRemoteFiles()
     local -i error_count=0;
     local requested_files;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local file_cleanup_file;
     local eligible_file;
