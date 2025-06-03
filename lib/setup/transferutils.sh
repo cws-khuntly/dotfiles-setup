@@ -459,7 +459,6 @@ function transferRemoteFiles()
                 (( file_counter += 1 ));
 
                 [[ -n "${eligible_file}" ]] && unset -v eligible_file;
-                fi
             done
 
             if [[ ! -s "${sftp_send_file}" ]] || (( file_counter != ${#files_to_process[*]} )); then
