@@ -722,50 +722,152 @@ function installRemoteFiles()
     target_host="${1}";
     target_port="${2}";
     target_user="${3}";
-    installation_script="${4}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${WORK_DIR}";
+    fi
+
+    installation_script="$(mktemp --tmpdir="${WORK_DIR}")";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installation_script -> ${installation_script}";
     fi
 
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fssh ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} \"bash -s < ${DEPLOY_TO_DIR}/$(basename "${installation_script}")\"";
-    fi
-
-    [[ -n "${install_response}" ]] && unset -v install_response;
-	[[ -n "${function_name}" ]] && unset -v function_name;
-	[[ -n "${cname}" ]] && unset -v cname;
-    [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-    install_response="$(fssh "${SSH_CONFIG_FILE}" "${target_host}" "${target_port}" "${target_user}" "bash -s" < "${DEPLOY_TO_DIR}/$(basename "${installation_script}")")";
-    ret_code="${?}";
-
-	cname="installutils.sh";
-	function_name="${cname}#${FUNCNAME[0]}";
-
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_response -> ${install_response}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ssh / install_response -> ret_code -> ${ret_code}";
-    fi
-
-    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) || [[ -z "${install_response}" ]]; then
-        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+    if [[ ! -e "${installation_script}" ]] || [[ ! -w "${installation_script}" ]]; then
+        return_code=1;
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while performing installation on remote host ${target_host}. install_response -> ${install_response}";
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to generate the installation script ${installation_script}. Please ensure the file exists and can be written to.";
         fi
     else
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Installation to host ${target_host} as user ${target_user} successfully completed.";
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Populating installation script ${installation_script}...";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC:
+                printf \"%s\n\n\" #!/usr/bin/env bash
+                printf \"%s\n\n\" PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;
+                printf \"%s\n\" umask 022;
+                printf \"%s\n\" mkdir -pv ${DEPLOY_TO_DIR}/{${SETUP_PACKAGE_NAME},${PACKAGE_NAME}}
+                printf \"%s\n\" ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );
+                printf \"%s\n\" ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${DEPLOY_TO_DIR}/${PACKAGE_NAME}\" || return 1; tar -xf - );
+                printf \"%s\n\n\" chmod 755 ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup;
+                printf \"%s\n\n\" ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n ${DEPLOY_TO_DIR}/$(basename "${PACKAGE_CONFIG_FILE}")
+                printf \"%s\n\n\" printf \"%s\" \${?}";
+        fi
+
+        ## build the install script
+        {
+            printf "%s\n\n" "#!/usr/bin/env bash";
+            printf "%s\n\n" "PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin;";
+            printf "%s\n" "umask 022;";
+            printf "%s\n" "mkdir -pv \"${DEPLOY_TO_DIR}/{${SETUP_PACKAGE_NAME},${PACKAGE_NAME}\";":
+            printf "%s\n" "${UNARCHIVE_PROGRAM} -c \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}\" | ( cd \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );";
+            printf "%s\n" "${UNARCHIVE_PROGRAM} -c \"${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}\" | ( cd \"${DEPLOY_TO_DIR}/${PACKAGE_NAME}\" || return 1; tar -xf - );";
+            printf "%s\n\n" "chmod 755 \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup\";";
+            printf "%s\n\n" "${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n \"${DEPLOY_TO_DIR}/$(basename "${PACKAGE_CONFIG}")\"";
+            printf "%s\n\n" "printf "%s" \${?}";
+        } >| "${installation_script}";
+
+        if [[ ! -s "${installation_script}" ]]; then
+            return_code=1;
+
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to populate the installation script ${installation_script}. Please ensure the file exists and can be written to.";
+            fi
+        else
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} \"${installation_script}|${DEPLOY_TO_DIR}|$(basename "${installation_script}")\" ${target_host} ${target_port} ${target_user}";
+            fi
+
+            [[ -n "${cname}" ]] && unset -v cname;
+            [[ -n "${function_name}" ]] && unset -v function_name;
+            [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+            transferFiles "${TRANSFER_LOCATION_REMOTE}" "\"${installation_script}|${DEPLOY_TO_DIR}|$(basename "${installation_script}")\"" "${target_host}" "${target_port}" "${target_user}";
+            ret_code="${?}";
+
+            cname="installutils.sh";
+            function_name="${cname}#${FUNCNAME[0]}";
+
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transferFiles -> ret_code -> ${ret_code}";
+            fi
+
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to execute transferFiles with transfer type of ${TRANSFER_LOCATION_REMOTE}. Please review logs.";
+                fi
+            else
+                ## ok, files should be out there. lets go
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fssh ${SSH_CONFIG_FILE} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}/$(basename "${installation_script}")";
+                fi
+
+                [[ -n "${cname}" ]] && unset -v cname;
+                [[ -n "${function_name}" ]] && unset -v function_name;
+                [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+                install_response="$(fssh "${SSH_CONFIG_FILE}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}/$(basename "${installation_script}")"))";
+                ret_code="${?}";
+
+                cname="setup.sh";
+                function_name="${cname}#${FUNCNAME[0]}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_response -> ${install_response}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installRemoteFiles -> ret_code -> ${ret_code}";
+                fi
+
+                if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) || [[ -z "${install_response}" ]]; then
+                    [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user}. Please review logs.";
+                    fi
+                else
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user} has completed with response ${install_response}.";
+                    fi
+                fi
+            fi
         fi
     fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${installation_script}" ]] && rm -i --preserve-root -f "${installation_script}";
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${installation_script}";
+    fi
+
+    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+    cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${installation_script}";
+    ret_code="${?}";
+
+    cname="installutils.sh";
+    function_name="${cname}#${FUNCNAME[0]}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles / ${CLEANUP_LOCATION_LOCAL} -> ret_code -> ${ret_code}";
+    fi
+
+    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "WARN" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while executing cleanupFiles ${CLEANUP_LOCATION_LOCAL}. Please review logs.";
+        fi
+    else
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles ${CLEANUP_LOCATION_LOCAL} completed successfully.";
+        fi
+    fi
 
     [[ -n "${initial_transfer_list}" ]] && unset -v initial_transfer_list;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
