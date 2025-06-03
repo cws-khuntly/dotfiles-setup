@@ -58,6 +58,8 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PRIMARY_CONFIG_FILE -> ${PRIMARY_CONFIG_FILE}";
 fi
 
+FUNCTION_NAME="${CNAME}#loadSetupConfig";
+
 if [[ -f "${CONFIG_FILE}" ]] && [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FILE}" ]]; then
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found configuration file ${CONFIG_FILE}";
@@ -76,6 +78,7 @@ fi
 #
 # load the system libs
 #
+FUNCTION_NAME="${CNAME}#loadSystemLibs";
 SYS_LIB_PATHS=( "${SETUP_ROOT}/lib/system" );
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -116,6 +119,49 @@ for SYS_LIB_PATH in "${SYS_LIB_PATHS[@]}"; do
 
     [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
     [[ -n "${SYS_LIB_PATH}" ]] && unset -v SYS_LIB_PATH;
+done
+
+## bring in any library scripts
+FUNCTION_NAME="${CNAME}#loadSetupLibs";
+SETUP_LIB_PATHS=( "${SETUP_ROOT}/lib/$(basename "${CNAME}" ".sh")" );
+
+if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_ROOT -> ${SETUP_ROOT}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATHS -> ${SETUP_LIB_PATHS[*]}";
+fi
+
+for SETUP_LIB_PATH in "${SETUP_LIB_PATHS[@]}"; do
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATH -> ${SETUP_LIB_PATH}";
+    fi
+
+    mapfile -t FILE_LIST < <(find "${SETUP_LIB_PATH}" -type f -name \*.sh 2>/dev/null);
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
+    fi
+
+    if [[ -z "${FILE_LIST[*]}" ]] || (( ${#FILE_LIST[*]} == 0 )); then continue; fi
+
+    for FILE in "${FILE_LIST[@]}"; do
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
+        fi
+
+        [[ -z "${FILE}" ]] && continue;
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
+        fi
+
+        # shellcheck source=/dev/null
+        source "${FILE}";
+
+        [[ -n "${FILE}" ]] && unset -v FILE;
+    done
+
+    [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
+    [[ -n "${SETUP_LIB_PATH}" ]] && unset -v SETUP_LIB_PATH;
 done
 
 #======  FUNCTION  ============================================================
@@ -820,6 +866,17 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
                 fi
                 ;;
+            customize|k)
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting CUSTOMIZE_BUILD...";
+                fi
+
+                CUSTOMIZE_BUILD="${_TRUE}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CUSTOMIZE_BUILD="${CUSTOMIZE_BUILD}";
+                fi
+                ;;
             help|\?|h)
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -972,49 +1029,43 @@ else
         # shellcheck source=/dev/null
         source "${PACKAGE_CONFIG_FILE}";
 
-        FUNCTION_NAME="${CNAME}#loadScriptLibs";
+        if [[ -n "$CUSTOMIZE_BUILD}" ]] && [[ "${CUSTOMIZE_BUILD}" == "${_TRUE}" ]]; then
+            FUNCTION_NAME="${CNAME}#loadBuildCustomizations";
 
-        ## bring in any library scripts
-        SETUP_LIB_PATHS=( "${SETUP_ROOT}/lib/$(basename "${CNAME}" ".sh")" );
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Build customization was set to ${_TRUE}. Runing custom setup script if found.";
+            fi
 
-        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_ROOT -> ${SETUP_ROOT}";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATHS -> ${SETUP_LIB_PATHS[*]}";
+            if [[ -f "${BUILD_PATH}/lib/setup/custom.sh" ]] && [[ -r "${BUILD_PATH}/lib/setup/custom.sh" ]] && [[ -s "${BUILD_PATH}/lib/setup/custom.sh" ]]; then
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found ${BUILD_PATH}/lib/setup/custom.sh, loading";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${BUILD_PATH}/lib/setup/custom.sh";
+                fi
+
+                source "${BUILD_PATH}/lib/setup/custom.sh";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: customizeBuild";
+                fi
+
+                customizeBuild;
+                [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
+
+                main "${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}}" "${TARGET_HOST}" "${TARGET_PORT:-${SSH_PORT_NUMBER}}" "${TARGET_USER}";
+                RET_CODE="${?}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+                fi
+
+                if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may not fail the setup. Return code -> ${RET_CODE}";
+                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may not fail the setup. Return code -> ${RET_CODE}";
+                    fi
+                 fi
+             fi
         fi
-
-        for SETUP_LIB_PATH in "${SETUP_LIB_PATHS[@]}"; do
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATH -> ${SETUP_LIB_PATH}";
-            fi
-
-            mapfile -t FILE_LIST < <(find "${SETUP_LIB_PATH}" -type f -name \*.sh 2>/dev/null);
-
-            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
-            fi
-
-            if [[ -z "${FILE_LIST[*]}" ]] || (( ${#FILE_LIST[*]} == 0 )); then continue; fi
-
-            for FILE in "${FILE_LIST[@]}"; do
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE -> ${FILE}";
-                fi
-
-                [[ -z "${FILE}" ]] && continue;
-
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
-                fi
-
-                # shellcheck source=/dev/null
-                source "${FILE}";
-
-                [[ -n "${FILE}" ]] && unset -v FILE;
-            done
-
-            [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
-            [[ -n "${SETUP_LIB_PATH}" ]] && unset -v SETUP_LIB_PATH;
-        done
 
         FUNCTION_NAME="${CNAME}#buildTargetList";
 
