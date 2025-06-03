@@ -778,14 +778,14 @@ function installRemoteFiles()
             fi
         else
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} \"${installation_script}|${DEPLOY_TO_DIR}|$(basename "${installation_script}")\" ${target_host} ${target_port} ${target_user}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${installation_script} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}";
             fi
 
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            transferFiles "${TRANSFER_LOCATION_REMOTE}" "\"${installation_script}|${DEPLOY_TO_DIR}|$(basename "${installation_script}")\"" "${target_host}" "${target_port}" "${target_user}";
+            transferFiles "${TRANSFER_LOCATION_REMOTE}" "${installation_script}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
             ret_code="${?}";
 
             cname="installutils.sh";

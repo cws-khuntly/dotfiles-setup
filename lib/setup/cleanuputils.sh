@@ -519,18 +519,16 @@ function cleanupRemoteFiles()
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to populate the file cleanup file ${file_cleanup_file}. Please ensure the file exists and can be written to.";
                 fi
             else
-                transfer_file="${file_cleanup_file}|${WORK_DIR}/$(basename "${file_cleanup_file}")";
-
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file -> ${transfer_file}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file} ${target_host} ${target_port} ${target_user}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${file_cleanup_file} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}";
                 fi
 
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file}" "${target_host}" "${target_port}" "${target_user}";
+                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${file_cleanup_file}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
                 ret_code="${?}";
 
                 cname="cleanuputils.sh";

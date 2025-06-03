@@ -174,20 +174,20 @@ function runDeployRemoteFiles()
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
 	fi
 
-    transfer_file_list="${WORK_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
-	transfer_file_list="${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION}|${DEPLOY_TO_DIR},";
-	transfer_file_list+="${WORKING_CONFIG_FILE}|${DEPLOY_TO_DIR},";
+    transfer_file_list="${WORK_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
+	transfer_file_list="${WORK_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
+	transfer_file_list+="${WORKING_CONFIG_FILE}";
 
 	if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
 		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${ssh_port_number} ${target_user}";
+		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${ssh_port_number} ${target_user} ${DEPLOY_TO_DIR}";
 	fi
 
     [[ -n "${cname}" ]] && unset -v cname;
 	[[ -n "${function_name}" ]] && unset -v function_name;
 	[[ -n "${ret_code}" ]] && unset -v ret_code;
 
-	transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${ssh_port_number}" "${target_user}";
+	transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${ssh_port_number}" "${target_user}" "${DEPLOY_TO_DIR}";
 	ret_code="${?}";
 
     cname="setup.sh";
@@ -458,14 +458,14 @@ function runInstallRemoteFiles()
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}"
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending installation script ${installation_script} to host ${target_host} as user ${target_user}...";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}";
         fi
 
         [[ -n "${cname}" ]] && unset -v cname;
         [[ -n "${function_name}" ]] && unset -v function_name;
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}";
+        transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
         ret_code="${?}";
 
         cname="installutils.sh";
@@ -538,14 +538,14 @@ function runInstallRemoteFiles()
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_file_list -> ${transfer_file_list}"
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending installation script ${installation_script} to host ${target_host} as user ${target_user}...";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${transfer_file_list} ${target_host} ${target_port} ${target_user}" "${DEPLOY_TO_DIR}";
                     fi
 
                     [[ -n "${cname}" ]] && unset -v cname;
                     [[ -n "${function_name}" ]] && unset -v function_name;
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}";
+                    transferFiles "${TRANSFER_LOCATION_REMOTE}" "${transfer_file_list}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
                     ret_code="${?}";
 
                     cname="installutils.sh";

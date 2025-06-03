@@ -470,14 +470,14 @@ function uninstallRemoteFiles()
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${sftp_send_file} ${target_host} ${ssh_port_number} ${target_user}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${sftp_send_file} ${target_host} ${ssh_port_number} ${target_user}" "${DEPLOY_TO_DIR}";
                 fi
 
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${sftp_send_file}|"$(basename "${sftp_send_file}")|"${USABLE_TMP_DIR:-${TMPDIR}}" "${target_host}" "${ssh_port_number}" "${target_user}";
+                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${sftp_send_file}" "${target_host}" "${ssh_port_number}" "${target_user}" "${DEPLOY_TO_DIR}";
                 ret_code="${?}";
 
                 cname="uninstallutils.sh";
