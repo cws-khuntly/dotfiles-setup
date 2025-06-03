@@ -772,7 +772,7 @@ function capturedata()
         fi
 
         case "${argument_name}" in
-            config|c)
+            "config"|"c")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "argument_value -> ${argument_value}";
                 fi
@@ -800,7 +800,18 @@ function capturedata()
                     source "${WORKING_CONFIG_FILE}";
                 fi
                 ;;
-            packageconfig|n)
+            "sourceurl"|"r")
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting SOURCE_URL...";
+                fi
+
+                SOURCE_URL="${argument_value}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SOURCE_URL -> ${SOURCE_URL}";
+                fi
+                ;;
+            "packageconfig"|"n")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting PACKAGE_CONFIG...";
                 fi
@@ -811,7 +822,7 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PACKAGE_CONFIG -> ${PACKAGE_CONFIG}";
                 fi
                 ;;
-            servername|s)
+            "servername"|"s")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting TARGET_HOST...";
                 fi
@@ -822,7 +833,7 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
                 fi
                 ;;
-            serverlist|l)
+            "serverlist"|"l")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting SERVER_LIST";
                 fi
@@ -833,7 +844,7 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SERVER_LIST -> ${SERVER_LIST}";
                 fi
                 ;;
-            port|p)
+            "port"|"p")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting TARGET_PORT...";
                 fi
@@ -844,7 +855,7 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_PORT -> ${TARGET_PORT}";
                 fi
                 ;;
-            username|u)
+            "username"|"u")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting TARGET_USER...";
                 fi
@@ -855,7 +866,7 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_USER -> ${TARGET_USER}";
                 fi
                 ;;
-            action|a)
+            "action"|"a")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting TARGET_ACTION...";
                 fi
@@ -866,7 +877,7 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
                 fi
                 ;;
-            customize|k)
+            "customize"|"k")
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Setting CUSTOMIZE_BUILD...";
                 fi
@@ -877,7 +888,7 @@ function capturedata()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "CUSTOMIZE_BUILD -> ${CUSTOMIZE_BUILD}";
                 fi
                 ;;
-            help|\?|h)
+            "help"|"?"|"h")
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
@@ -957,14 +968,16 @@ function usage()
     printf "    %s: %s\n" "NOTE" "All configuration options are available in the configuration file, and may be overridden with the appropriate arguments." >&2;
     printf "    %s: %s\n" "--config | -c <configuration file>" "(Optional) The location to an alternative configuration file for this utility. Default configuration file -> ${PRIMARY_CONFIG_FILE}" >&2;
     printf "        %s: %s\n" "NOTE" "While this is an optional argument, it MUST be the first positional parameter to this application in order to properly load the various configuration options." >&2;
+    printf "    %s: %s\n" "--sourceurl | -r <sourceurl>" "(Optional) A fully-qualified URL to the source package. No default value." >&2;
+    printf "        %s: %s\n" "NOTE" "If this option is supplied, the path supplied for the package config file must be relative to the checkout path of ${USABLE_TMP_DIR:-${TMPDIR}}." >&2;
     printf "    %s: %s\n" "--packageconfig | -n <packageconfig>" "(Required) The full path to the package setup file. No default value." >&2;
+    printf "        %s: %s\n" "NOTE" "The path supplied for the package configuration file must be an absolute path, unless a source URL is specified." >&2;
     printf "    %s: %s\n" "--servername | -s <hostname>" "(Optional) The target system name to process against. Default value -> ${TARGET_HOST}." >&2;
     printf "    %s: %s\n" "--username | -u <username>" "(Optional) The username to utilize for the target system. Default value -> ${TARGET_USER}." >&2;
     printf "    %s: %s\n" "--action | -a <action>" "(Optional) The type of process to execute. One of the following. Default value -> ${RUNTIME_ACTION_COMBINED}" >&2;
     printf "        %s: %s\n" "deployFiles" "Pushes files to the selected system but does not install/apply" >&2;
     printf "        %s: %s\n" "installFiles" "Installs files to the selected system - assumes the package has already been sent to the target system" >&2;
     printf "        %s: %s\n" "deployAndInstall" "Pushes files to the selected system and installs" >&2;
-    printf "        %s: %s\n" "refreshFiles" "Performs a refresh of the existing files, adding/removing entries as necessary" >&2;
     printf "    %s: %s\n" "--help | -h | -?" "Show this help menu." >&2;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -992,6 +1005,7 @@ FUNCTION_NAME="${CNAME}#validate";
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PROVIDED_CONFIG_FILE -> ${PROVIDED_CONFIG_FILE}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SOURCE_URL -> ${SOURCE_URL}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PACKAGE_CONFIG -> ${PACKAGE_CONFIG}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_HOST -> ${TARGET_HOST}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_PORT -> ${TARGET_PORT}";
@@ -1007,8 +1021,31 @@ if [[ -z "${PACKAGE_CONFIG}" ]]; then
         writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "No package was provided to operate with. Cannot continue.";
     fi
 else
+    if [[ -n "${SOURCE_URL}" ]]; then
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "A source URL was provided, performing checkout";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: git clone ${SOURCE_URL} ${USABLE_TMP_DIR:-${TMPDIR}}/checkout";
+        fi
+
+        git clone "${SOURCE_URL}" "${USABLE_TMP_DIR:-${TMPDIR}}/checkout";
+        RET_CODE="${?}";
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+        fi
+
+        if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error checking out the requested package from ${SOURCE_URL}. Return code -> ${RET_CODE}";
+                writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error checking out the requested package from ${SOURCE_URL}. Return code -> ${RET_CODE}";
+            fi
+        fi
+    fi
+
     FUNCTION_NAME="${CNAME}#loadPackageConfig";
-    PACKAGE_CONFIG_FILE="${PACKAGE_CONFIG}"
+
+    [[ -n "${SOURCE_URL}" ]] && PACKAGE_CONFIG_FILE="${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_CONFIG_FILE}";
+    [[ -z "${SOURCE_URL}" ]] && PACKAGE_CONFIG_FILE="${PACKAGE_CONFIG}"
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PACKAGE_CONFIG_FILE -> ${PACKAGE_CONFIG_FILE}";
@@ -1022,12 +1059,31 @@ else
             writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Unable to find and/or read the setup file ${PACKAGE_CONFIG}. Please ensure the file exists and is readable.";
         fi
     else
+        if [[ -n "${SOURCE_URL}" ]]; then
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Package downloaded from source URL, obtaining package name and relocate the source";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: grep -Ew (^PACKAGE_NAME=) ${PACKAGE_CONFIG} | cut -d = -f 2";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: mv "${USABLE_TMP_DIR:-${TMPDIR}}/checkout" "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: sed -i'' -e \"s/BUILD_PATH=.*/BUILD_PATH=${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}/\" ${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}/${PACKAGE_CONFIG_FILE}";
+            fi
+
+            PACKAGE_NAME="$(grep -Ew "(^PACKAGE_NAME=)" "${PACKAGE_CONFIG}" | cut -d "=" -f 2)";
+
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PACKAGE_NAME -> ${PACKAGE_NAME}";
+            fi
+
+            mv "${USABLE_TMP_DIR:-${TMPDIR}}/checkout" "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}";
+            sed -i'' -e "s/BUILD_PATH=.*/BUILD_PATH=${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}/" "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}/${PACKAGE_CONFIG_FILE}";
+        fi
+
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${PACKAGE_CONFIG_FILE}";
         fi
 
         # shellcheck source=/dev/null
-        source "${PACKAGE_CONFIG_FILE}";
+        [[ -n "${SOURCE_URL}" ]] && source "${USABLE_TMP_DIR:-${TMPDIR}}/${PACKAGE_NAME}/${PACKAGE_CONFIG_FILE}";
+        [[ -z "${SOURCE_URL}" ]] && source "${PACKAGE_CONFIG_FILE}";
 
         if [[ -n "${CUSTOMIZE_BUILD}" ]] && [[ "${CUSTOMIZE_BUILD}" == "${_TRUE}" ]]; then
             FUNCTION_NAME="${CNAME}#loadBuildCustomizations";
@@ -1042,6 +1098,7 @@ else
                     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${BUILD_PATH}/lib/setup/custom.sh";
                 fi
 
+                # shellcheck source=/dev/null
                 source "${BUILD_PATH}/lib/setup/custom.sh";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -1049,9 +1106,6 @@ else
                 fi
 
                 customizeBuild;
-                [[ -n "${RET_CODE}" ]] && unset -v RET_CODE;
-
-                main "${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}}" "${TARGET_HOST}" "${TARGET_PORT:-${SSH_PORT_NUMBER}}" "${TARGET_USER}";
                 RET_CODE="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -1060,8 +1114,8 @@ else
 
                 if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may not fail the setup. Return code -> ${RET_CODE}";
-                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may not fail the setup. Return code -> ${RET_CODE}";
+                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may fail the setup. Return code -> ${RET_CODE}";
+                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may fail the setup. Return code -> ${RET_CODE}";
                     fi
                  fi
              fi
@@ -1185,14 +1239,13 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${PRIMARY_CONFIG_FILE}" ]] && unset -v PRIMARY_CONFIG_FILE;
 [[ -n "${WORKING_CONFIG_FILE}" ]] && unset -v WORKING_CONFIG_FILE;
 [[ -n "${PROVIDED_CONFIG_FILE}" ]] && unset -v PROVIDED_CONFIG_FILE;
+[[ -n "${SOURCE_URL}" ]] && unset -v SOURCE_URL;
 [[ -n "${PACKAGE_CONFIG_FILE}" ]] && unset -v PACKAGE_CONFIG_FILE;
 [[ -n "${PACKAGE_CONFIG}" ]] && unset -v PACKAGE_CONFIG;
 [[ -n "${TARGET_HOST}" ]] && unset -v TARGET_HOST;
 [[ -n "${TARGET_PORT}" ]] && unset -v TARGET_PORT;
 [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
 [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
-[[ -n "${GPG_OPTION_FILE}" ]] && unset -v GPG_OPTION_FILE;
-[[ -n "${IS_GPG_AVAILABLE}" ]] && unset -v IS_GPG_AVAILABLE;
 [[ -n "${SERVER_LIST}" ]] && unset -v SERVER_LIST;
 [[ -n "${SYS_LIB_PATHS[*]}" ]] && unset -v SYS_LIB_PATHS;
 
