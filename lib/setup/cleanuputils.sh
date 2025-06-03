@@ -252,13 +252,13 @@ function cleanupLocalFiles()
 
         if [[ -d "${eligible_file}" ]] && [[ -w "${eligible_file}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -rf ${eligible_file:?}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${eligible_file:?}";
             fi
 
             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output="$(rm -i --preserve-root -rf "${eligible_file:?}")";
+            cmd_output="$(rm -rf "${eligible_file:?}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -287,13 +287,13 @@ function cleanupLocalFiles()
             fi
         elif [[ -e "${eligible_file}" ]] && [[ -f "${eligible_file}" ]] && [[ -w "${eligible_file}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -f ${eligible_file:?}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${eligible_file:?}";
             fi
 
             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output="$(rm -i --preserve-root -f "${eligible_file:?}")";
+            cmd_output="$(rm -f "${eligible_file:?}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
