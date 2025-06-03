@@ -415,8 +415,7 @@ function cleanupRemoteFiles()
     local target_port;
     local target_user;
     local file_cleanup_file;
-    local targetFile;
-    local targetDir;
+    local eligible_file;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -482,43 +481,26 @@ function cleanupRemoteFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Populating file cleanup file ${file_cleanup_file}...";
             fi
 
-            for eligibleFile in "${requested_files[@]}"; do
+            for eligible_file in "${requested_files[@]}"; do
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_counter -> ${file_counter}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "eligibleFile -> ${eligibleFile}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Check if file ${eligibleFile} exists and removing if necessary";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "eligible_file -> ${eligible_file}";
                 fi
 
-                [[ -z "${eligibleFile}" ]] && continue;
+                [[ -z "${eligible_file}" ]] && continue;
 
-                targetFile="$(awk -F "|" '{print $1}' <<< "${eligibleFile}")";
-                targetDir="$(awk -F "|" '{print $2}' <<< "${eligibleFile}")";
-
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "targetFile -> ${targetFile}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "targetDir -> ${targetDir}";
-                fi
-
-                if [[ -n "${targetDir}" ]] && [[ -n "${targetFile}" ]]; then
-                    if (( file_counter == 0 )); then
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"-\" \"rm\" \"${targetDir:?}/${targetFile}\" >| ${file_cleanup_file}";
-                        fi
-
-                        { printf "%s %s %s\n" "-" "rm -i --preserve-root" "${targetDir:?}/${targetFile}"; } >| "${file_cleanup_file}";
-                    else
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"-\" \"rm\" \"${targetDir:?}/${targetFile}\" >> ${file_cleanup_file}";
-                        fi
-
-                        { printf "%s %s %s\n" "-" "rm -i --preserve-root" "${targetDir:?}/${targetFile}"; } >> "${file_cleanup_file}";
+                if (( file_counter == 0 )); then
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"-\" \"rm -i --preserve-root -rf\" \"${eligible_file:?}\" >| ${file_cleanup_file}";
                     fi
+
+                    { printf "%s %s %s\n" "-" "rm -i --preserve-root" "${eligible_file:?}"; } >| "${file_cleanup_file}";
                 else
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "targetFile ${targetDir}/${targetFile} was null or empty. Skipping entry.";
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"-\" \"rm -i --preserve-root -rf\" \"${eligible_file:?}\" >> ${file_cleanup_file}";
                     fi
 
-                    continue;
+                    { printf "%s %s %s\n" "-" "rm -i --preserve-root -rf" "${eligible_file:?}"; } >> "${file_cleanup_file}";
                 fi
 
                 (( file_counter += 1 ));
@@ -527,9 +509,7 @@ function cleanupRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_counter -> ${file_counter}";
                 fi
 
-                [[ -n "${eligibleFile}" ]] && unset -v eligibleFile;
-                [[ -n "${targetFile}" ]] && unset -v targetFile;
-                [[ -n "${targetDir}" ]] && unset -v targetDir;
+                [[ -n "${eligible_file}" ]] && unset -v eligible_file;
             done
 
             if [[ ! -s "${file_cleanup_file}" ]]; then
@@ -587,8 +567,7 @@ function cleanupRemoteFiles()
     [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
     [[ -n "${file_cleanup_file}" ]] && unset -v file_cleanup_file;
-    [[ -n "${targetFile}" ]] && unset -v targetFile;
-    [[ -n "${targetDir}" ]] && unset -v targetDir;
+    [[ -n "${eligible_file}" ]] && unset -v eligible_file;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
