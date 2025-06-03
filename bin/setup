@@ -1029,7 +1029,7 @@ else
         # shellcheck source=/dev/null
         source "${PACKAGE_CONFIG_FILE}";
 
-        if [[ -n "$CUSTOMIZE_BUILD}" ]] && [[ "${CUSTOMIZE_BUILD}" == "${_TRUE}" ]]; then
+        if [[ -n "${CUSTOMIZE_BUILD}" ]] && [[ "${CUSTOMIZE_BUILD}" == "${_TRUE}" ]]; then
             FUNCTION_NAME="${CNAME}#loadBuildCustomizations";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
