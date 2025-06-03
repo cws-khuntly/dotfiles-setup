@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+#==============================================================================
+#
+#          FILE:  defaults
+#         USAGE:  . defaults
+#   DESCRIPTION:  Sets default commandline options and variables for various programs
+#
+#       OPTIONS:  ---
+#  REQUIREMENTS:  ---
+#          BUGS:  ---
+#         NOTES:  ---
+#        AUTHOR:  Kevin Huntly <kmhuntly@gmail.com>
+#       COMPANY:  ---
+#       VERSION:  1.0
+#       CREATED:  ---
+#      REVISION:  ---
+#
+#==============================================================================
+
+alias send-file='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from="${SETUP_ROOT}/config/excludes" --timeout "${REQUEST_TIMEOUT:-30}" --temp-dir="${WORK_DIR}" --no-motd --blocking-io --stats --progress -e "ssh -qtl "${TARGET_USER}" -E ${LOG_ROOT}/ssh.log" --log-file=${LOG_ROOT}/rsync.log';
