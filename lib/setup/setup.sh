@@ -603,16 +603,13 @@ function runInstallRemoteFiles()
 
     [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
 
-    cleanup_file_list="${installation_script},";
-
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_file_list -> ${cleanup_file_list}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_REMOTE} ${cleanup_file_list} ${target_hostname} ${target_ssh_port} ${target_ssh_user}";
-    fi
-
     [[ -n "${cname}" ]] && unset -v cname;
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+    cleanup_file_list="${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
+    cleanup_file_list+="${DEPLOY_TO_DIR}/${PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION},";
+    cleanup_file_list+="${DEPLOY_TO_DIR}/${PACKAGE_CONFIG}";
 
     cleanupFiles "${CLEANUP_LOCATION_REMOTE}" "${cleanup_file_list}" "${target_hostname}" "${target_ssh_port}" "${target_ssh_user}";
     ret_code="${?}";
