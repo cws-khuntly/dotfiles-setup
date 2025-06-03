@@ -508,7 +508,7 @@ function runInstallRemoteFiles()
                         printf \"%s\n\" mkdir -pv ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}
                         printf \"%s\n\" ${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );
                         printf \"%s\n\n\" chmod 755 ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup;
-                        printf \"%s\n\n\" ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n ${DEPLOY_TO_DIR}/$(basename "${PACKAGE_CONFIG_FILE}")
+                        printf \"%s\n\n\" ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n ${DEPLOY_TO_DIR}/$(basename "${PACKAGE_SETUP_FILE}")
                         printf \"%s\n\n\" printf \"%s\" \${?}";
                 fi
 
@@ -520,7 +520,7 @@ function runInstallRemoteFiles()
                     printf "%s\n" "mkdir -pv \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\";":
                     printf "%s\n" "${UNARCHIVE_PROGRAM} -c ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}.${ARCHIVE_FILE_EXTENSION} | ( cd \"${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}\" || return 1; tar -xf - );";
                     printf "%s\n\n" "chmod 755 ${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup;";
-                    printf "%s\n\n" "${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n $(basename "${PACKAGE_CONFIG_FILE}");";
+                    printf "%s\n\n" "${DEPLOY_TO_DIR}/${SETUP_PACKAGE_NAME}/bin/setup -n $(basename "${PACKAGE_SETUP_FILE}");";
                     printf "%s\n\n" "printf "%s" \${?}";
                 } >| "${installation_script}";
 
