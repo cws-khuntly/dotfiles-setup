@@ -16,7 +16,7 @@
 #      REVISION:  ---
 #==============================================================================
 
-trap 'set +v; set +x' INT TERM EXIT;
+trap 'set +v; set +x; cleanupFiles "${CLEANUP_TYPE_LOCAL}" "${WORK_DIR:?}"; exit' INT TERM EXIT;
 
 #
 # Application constants
