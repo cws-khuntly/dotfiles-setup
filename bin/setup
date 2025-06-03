@@ -16,8 +16,6 @@
 #      REVISION:  ---
 #==============================================================================
 
-trap 'set +v; set +x; cleanupFiles "${CLEANUP_TYPE_LOCAL}" "${WORK_DIR:?}"; exit' INT TERM EXIT;
-
 #
 # Application constants
 #
@@ -166,6 +164,11 @@ for SETUP_PATH in "${SETUP_PATHS[@]}"; do
     [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
     [[ -n "${SETUP_PATH}" ]] && unset -v SETUP_PATH;
 done
+
+#
+# set up the trap
+#
+trap 'set +v; set +x; cleanupFiles "${CLEANUP_TYPE_LOCAL}" "${WORK_DIR:?}"; exit' INT TERM EXIT;
 
 #======  FUNCTION  ============================================================
 #          NAME:  main
