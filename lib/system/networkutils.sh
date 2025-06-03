@@ -234,12 +234,12 @@ function checkForValidHost()
 
         if [[ -n "${isFQDN}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: host -N 0 ${checkForHostname} > /dev/null 2>&1";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: host ${checkForHostname} > /dev/null 2>&1";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            host -N 0 "${checkForHostname}" > /dev/null 2>&1;
+            host "${checkForHostname}" > /dev/null 2>&1;
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -308,12 +308,12 @@ function checkForValidHost()
                     ## check if in DNS...;
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "search_domain -> ${search_domain}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: host -N 0 ${checkForHostname}.${search_domain} > /dev/null 2>&1";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: host ${checkForHostname}.${search_domain} > /dev/null 2>&1";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    host -N 0 "${checkForHostname}.${search_domain}" > /dev/null 2>&1;
+                    host "${checkForHostname}.${search_domain}" > /dev/null 2>&1;
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -341,7 +341,7 @@ function checkForValidHost()
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
                 [[ -n "${search_domain}" ]] && unset -v search_domain;
                 [[ -n "${resolver_entry}" ]] && unset -v resolver_entry;
-            done;
+            done
 
             ## restore the original ifs;
             IFS="${CURRENT_IFS}";
@@ -472,7 +472,7 @@ function checkForValidAddress()
                 fi
 
                 [[ -n "${entry}" ]] && unset -v entry;
-            done;
+            done
 
             if [[ -z "${counter}" ]] || (( counter == 0 )); then returnedHostAddress="${checkForAddress}"; else return_code=1; fi
         else
@@ -693,14 +693,14 @@ function checkIfHostIsAlive()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nc -w ${REQUEST_TIMEOUT:-10} -z ${checkNetworkName} ${checkNetworkPort} > /dev/null 2>&1";
                     fi
 
-                    nc -w "${REQUEST_TIMEOUT:-10}" -z "${checkNetworkName}" "${checkNetworkPort}" > /dev/null 2>&1;
+                    nc "${checkNetworkName}" "${checkNetworkPort}" > /dev/null 2>&1;
                     ;;
                 "[Uu][Dd][Pp]")
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nc -w ${REQUEST_TIMEOUT:-10} -u -z ${checkNetworkName} ${checkNetworkPort} > /dev/null 2>&1";
                     fi
 
-                    nc -w "${REQUEST_TIMEOUT:-10}" -u -z "${checkNetworkName}" "${checkNetworkPort}" > /dev/null 2>&1;
+                    nc -u "${checkNetworkName}" "${checkNetworkPort}" > /dev/null 2>&1;
                     ;;
             esac
 
@@ -731,14 +731,14 @@ function checkIfHostIsAlive()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap -sT -p ${checkNetworkPort}  ${checkNetworkHost} 2>/dev/null";
                     fi
 
-                    isHostAvailable="$(nmap -sT -p "${checkNetworkPort}"  "${checkNetworkHost}" 2>/dev/null)";
+                    isHostAvailable="$(nmap -T "${checkNetworkPort}" "${checkNetworkHost}" 2>/dev/null)";
                     ;;
                 "[Uu][Dd][Pp]")
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: nmap -sU -p ${checkNetworkPort}  ${checkNetworkHost} 2>/dev/null";
                     fi
 
-                    isHostAvailable="$(nmap -sU -p "${checkNetworkPort}"  "${checkNetworkHost}" 2>/dev/null)";
+                    isHostAvailable="$(nmap -U "${checkNetworkPort}" "${checkNetworkHost}" 2>/dev/null)";
                     ;;
             esac
 

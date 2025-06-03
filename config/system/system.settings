@@ -24,11 +24,11 @@ declare -ix REQUEST_TIMEOUT=10;
 alias sftp='sftp -F "${SETUP_ROOT}/config/system/sshconfig" -qr -P "${TARGET_PORT:-22}";
 alias ssh='ssh -F "${SETUP_ROOT}/config/system/sshconfig" -ql "${TARGET_USER}" -p "${TARGET_PORT:-22}"
 alias ssh-keygen='ssh-keygen -C "" -N ""';
-alias ssh-keyscan='ssh-keyscan -4 -T "${THREAD_TIMEOUT:-30} -F';
+alias ssh-keyscan='ssh-keyscan -4 -T "${REQUEST_TIMEOUT:-30} -F';
 alias ssh-copy-id='ssh-copy-id -f -i';
 alias rsync='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from="${SETUP_ROOT}/config/excludes" --timeout "${REQUEST_TIMEOUT:-30}" --temp-dir="${WORK_DIR}" --no-motd --blocking-io --stats --progress -e "ssh -qtl "${TARGET_USER}" -E ${LOG_ROOT}/ssh.log" --log-file=${LOG_ROOT}/rsync.log';
-alias ping='ping -c 4 -q -W ${THREAD_TIMEOUT:-10}';
-alias nc='nc -w ${THREAD_TIMEOUT:-10}';
+alias ping='ping -c 4 -q -W ${REQUEST_TIMEOUT:-10}';
+alias nc='nc -w ${REQUEST_TIMEOUT:-10}';
 alias rm='rm -i --preserve-root';
 alias chown='chown --preserve-root -Rh';
 alias chmod='chmod --preserve-root -R';
@@ -37,6 +37,9 @@ alias cp='cp -i -p';
 alias ln='ln -i -s';
 alias mkdir='mkdir -pv';
 alias mktemp='mktemp --tmpdir=${WORK_DIR}';
+alias host='host -N 0';
+alias nc='nc -w "${REQUEST_TIMEOUT:-10}" -z';
+alias nmap='nmap -sp';
 
 set -o notify;
 set -o monitor;
