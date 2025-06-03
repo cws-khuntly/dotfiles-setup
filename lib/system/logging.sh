@@ -198,7 +198,7 @@ function writeLogEntryToFile()
 
     printf "${CONVERSION_PATTERN}\n" "${log_date}" "${log_file}" "${log_level}" "${log_pid}" "${log_source}" "${log_line}" "${log_method}" "${log_message}" >> "${LOG_ROOT}/${log_file}";
 
-    if [[ -n "${current_clobber}" ]] && [[ "${current_clobber}" =="off" ]]; then set +o noclobber; fi
+    if [[ -n "${current_clobber}" ]] && [[ "${current_clobber}" == "off" ]]; then set +o noclobber; fi
 
     [[ -n "${log_level}" ]] && unset log_level;
     [[ -n "${log_pid}" ]] && unset log_pid;
