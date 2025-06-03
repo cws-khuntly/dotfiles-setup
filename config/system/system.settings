@@ -30,12 +30,12 @@ alias rsync='rsync -avz --append --safe-links --delete --delete-excluded --exclu
 alias ping='ping -c 4 -q -W ${THREAD_TIMEOUT:-10}';
 alias nc='nc -w ${THREAD_TIMEOUT:-10}';
 alias rm='rm -i --preserve-root';
-alias chown='chown --preserve-root';
-alias chmod='chmod --preserve-root';
-alias chgrp='chgrp --preserve-root';
+alias chown='chown --preserve-root -Rh';
+alias chmod='chmod --preserve-root -R';
 alias mv='mv -i';
 alias cp='cp -i';
 alias ln='ln -i';
+alias mktemp='mktemp --tmpdir=${WORK_DIR}';
 
 set -o notify;
 set -o monitor;
