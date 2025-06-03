@@ -76,22 +76,22 @@ if [[ -f "${CONFIG_FILE}" ]] && [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FIL
 fi
 
 #
-# load the system libs
+# load the system libs/config
 #
 FUNCTION_NAME="${CNAME}#loadSystemLibs";
-SYS_LIB_PATHS=( "${SETUP_ROOT}/lib/system" );
+SYSTEM_PATHS=( "${SETUP_ROOT}/lib/system" "${SETUP_ROOT}/config/setup" );
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_ROOT -> ${SETUP_ROOT}";
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SYS_LIB_PATHS -> ${SYS_LIB_PATHS[*]}";
 fi
 
-for SYS_LIB_PATH in "${SYS_LIB_PATHS[@]}"; do
+for SYSTEM_PATH in "${SYSTEM_PATHS[@]}"; do
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SYS_LIB_PATH -> ${SYS_LIB_PATH}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SYSTEM_PATH -> ${SYSTEM_PATH}";
     fi
 
-    mapfile -t FILE_LIST < <(find "${SYS_LIB_PATH}" -type f -name \*.sh 2>/dev/null);
+    mapfile -t FILE_LIST < <(find "${SYSTEM_PATH}" -type f -name \*.sh -o -name \*.settings 2>/dev/null);
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
@@ -118,24 +118,26 @@ for SYS_LIB_PATH in "${SYS_LIB_PATHS[@]}"; do
     done
 
     [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
-    [[ -n "${SYS_LIB_PATH}" ]] && unset -v SYS_LIB_PATH;
+    [[ -n "${SYSTEM_PATH}" ]] && unset -v SYSTEM_PATH;
 done
 
-## bring in any library scripts
+#
+# load the setup libs/configs
+#
 FUNCTION_NAME="${CNAME}#loadSetupLibs";
-SETUP_LIB_PATHS=( "${SETUP_ROOT}/lib/$(basename "${CNAME}" ".sh")" );
+SETUP_PATHS=( "${SETUP_ROOT}/lib/setup" "${SETUP_ROOT}/config/setup" );
 
 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_ROOT -> ${SETUP_ROOT}";
-    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATHS -> ${SETUP_LIB_PATHS[*]}";
+    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_PATHS -> ${SETUP_PATHS[*]}";
 fi
 
-for SETUP_LIB_PATH in "${SETUP_LIB_PATHS[@]}"; do
+for SETUP_PATH in "${SETUP_PATHS[@]}"; do
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_LIB_PATH -> ${SETUP_LIB_PATH}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SETUP_PATH -> ${SETUP_PATH}";
     fi
 
-    mapfile -t FILE_LIST < <(find "${SETUP_LIB_PATH}" -type f -name \*.sh 2>/dev/null);
+    mapfile -t FILE_LIST < <(find "${SETUP_PATH}" -type f -name \*.sh -o -name \*.settings 2>/dev/null);
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "FILE_LIST -> ${FILE_LIST[*]}";
@@ -149,9 +151,10 @@ for SETUP_LIB_PATH in "${SETUP_LIB_PATHS[@]}"; do
         fi
 
         [[ -z "${FILE}" ]] && continue;
+        [[ "$(basename "${FILE}")" == "logger.sh" ]] && continue;
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${FILE}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${SYS_LIB_PATH}/${FILE}";
         fi
 
         # shellcheck source=/dev/null
@@ -161,7 +164,7 @@ for SETUP_LIB_PATH in "${SETUP_LIB_PATHS[@]}"; do
     done
 
     [[ -n "${FILE_LIST[*]}" ]] && unset -v FILE_LIST;
-    [[ -n "${SETUP_LIB_PATH}" ]] && unset -v SETUP_LIB_PATH;
+    [[ -n "${SETUP_PATH}" ]] && unset -v SETUP_PATH;
 done
 
 #======  FUNCTION  ============================================================
@@ -1247,6 +1250,7 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${TARGET_USER}" ]] && unset -v TARGET_USER;
 [[ -n "${TARGET_ACTION}" ]] && unset -v TARGET_ACTION;
 [[ -n "${SERVER_LIST}" ]] && unset -v SERVER_LIST;
-[[ -n "${SYS_LIB_PATHS[*]}" ]] && unset -v SYS_LIB_PATHS;
+[[ -n "${SYSTEM_PATHS[*]}" ]] && unset -v SYSTEM_PATHS;
+[[ -n "${SETUP_PATHS[*]}" ]] && unset -v SETUP_PATHS;
 
 exit "${RETURN_CODE}";
