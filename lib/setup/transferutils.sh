@@ -478,7 +478,7 @@ function transferRemoteFiles()
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(send-file "--files-from="${sftp_send_file}" "${target_user}@${target_host}:${target_dir}")";
+                cmd_output="$(send-file "--files-from=${sftp_send_file}" "${target_user}@${target_host}:${target_dir}")";
                 ret_code="${?}";
 
                 cname="transferutils.sh";
