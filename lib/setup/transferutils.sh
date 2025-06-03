@@ -38,6 +38,7 @@ function transferFiles()
     local target_host;
     local -i target_port;
     local target_user;
+    local target_dir;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -98,24 +99,26 @@ function transferFiles()
             fi
             ;;
         "${TRANSFER_LOCATION_REMOTE}")
-            (( ${#} != 5 )) && return 3;
+            (( ${#} != 6 )) && return 3;
 
             target_host="${3}";
             target_port="${4}";
             target_user="${5}";
+            target_dir="${6}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferRemoteFiles ${files_to_process} ${target_host} ${target_port} ${target_user}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_dir -> ${target_dir}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferRemoteFiles ${files_to_process} ${target_host} ${target_port} ${target_user} ${target_dir}";
             fi
 
             [[ -n "${cname}" ]] && unset -v cname;
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            transferRemoteFiles "${files_to_process}" "${target_host}" "${target_port}" "${target_user}";
+            transferRemoteFiles "${files_to_process}" "${target_host}" "${target_port}" "${target_user} "${target_dir}";
             ret_code="${?}";
 
             cname="transferutils.sh";
