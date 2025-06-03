@@ -27,7 +27,7 @@ jobs:
         env:
           SHELLCHECK_OPTS: '-x -s bash'
         with:
-          additional_files: './bin/* ./lib/system/*.sh ./lib/system/*.settings ./lib/setup/*.sh ./lib/setup/*.settings ./lib/*.sh *.sh'
+          additional_files: './bin/* ./lib/system/*.sh ./lib/setup/*.sh ./config/system/*.settings ./lib/setup/*.settings ./lib/*.sh *.sh'
           severity: 'error'
           check_together: 'yes'
           format: 'gcc'
