@@ -446,7 +446,7 @@ function transferRemoteFiles()
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s\\n\" ${eligible_file} >> ${sftp_send_file}";
                         fi
 
-                        { printf "%s\n" "${eligible_file}" >> "${sftp_send_file}";
+                        { printf "%s\n" "${eligible_file}"; } >> "${sftp_send_file}";
                     fi
                 else
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
