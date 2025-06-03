@@ -77,7 +77,7 @@ function getHostKeys()
             [[ -n "${does_key_exist}" ]] && unset -v does_key_exist;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            does_key_exist="$(ssh-keygen -F "${target_host}" 2>/dev/null | grep "${keytype}")";
+            does_key_exist="$(ssh-keygen "${target_host}" 2>/dev/null | grep "${keytype}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -100,7 +100,7 @@ function getHostKeys()
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
             remote_ssh_version="$(printf "%s" "~" | nc "${target_host}" "${target_port}" 2>/dev/null | head -1 | tr -d $'\r')";
-            remote_ssh_key="$(ssh-keyscan -t "${keytype}" -p "${target_port}" -H "${target_host}")";
+            remote_ssh_key="$(ssh-keyscan -t "${keytype}" -p "${target_port}" "${target_host}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -259,8 +259,8 @@ function generateSshKeys()
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                [[ "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$("${SSH_KEYGEN_PROGRAM}" -b "${ssh_key_size}" -C '' -f "${WORK_DIR}/${ssh_key_filename}" -N '' -t "${ssh_key_type}")";
-                [[ ! "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$("${SSH_KEYGEN_PROGRAM}" -C '' -f "${WORK_DIR}/${ssh_key_filename}" -N '' -t "${ssh_key_type}")";
+                [[ "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$("ssh-keygen -b "${ssh_key_size}" -f "${WORK_DIR}/${ssh_key_filename}" -t "${ssh_key_type}")";
+                [[ ! "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$("ssh-keygen -f "${WORK_DIR}/${ssh_key_filename}" -t "${ssh_key_type}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -423,7 +423,7 @@ function copyKeysToTarget()
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(echo "${sshpass}" | ssh-copy-id -i "${keyfile}" -f -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
+                cmd_output="$(echo "${sshpass}" | ssh-copy-id "${keyfile}" -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -554,7 +554,7 @@ function fssh()
 			writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided SSH configuration file could not be found or was not readable.";
 		fi
 	else
-		cmd_output="$(ssh -F "${sshconfig}" -ql "${target_user}" -p "${target_port}" "${target_host}" "${run_cmd}")";
+		cmd_output="$(ssh "${target_host}" "${run_cmd}")";
 		ret_code="${?}";
 
 		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -668,7 +668,7 @@ function fsftp()
 			writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided SSH configuration file could not be found or was not readable.";
 		fi
 	else
-		cmd_output="$(sftp -F "${sshconfig}" -b "${sftpfile}" -P "${target_port}" "${target_user}@${target_host}")";
+		cmd_output="$(sftp -b "${sftpfile}" "${target_user}@${target_host}")";
 		ret_code="${?}";
 
 		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then

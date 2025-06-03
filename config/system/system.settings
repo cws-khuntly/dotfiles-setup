@@ -21,9 +21,11 @@
 declare -rx SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/${UID}}/ssh-agent.socket" 2>/dev/null;
 declare -ix REQUEST_TIMEOUT=10;
 
-alias sftp='sftp -qr';
-alias ssh-keygen='ssh-keygen -C ""';
-alias ssh-keyscan='ssh-keyscan -H';
+alias sftp='sftp -F "${SETUP_ROOT}/config/system/sshconfig" -qr -P "${TARGET_PORT:-22}";
+alias ssh='ssh -F "${SETUP_ROOT}/config/system/sshconfig" -ql "${TARGET_USER}" -p "${TARGET_PORT:-22}"
+alias ssh-keygen='ssh-keygen -C "" -N ""';
+alias ssh-keyscan='ssh-keyscan -4 -T "${THREAD_TIMEOUT:-30} -F';
+alias ssh-copy-id='ssh-copy-id -f -i';
 alias rsync='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from="${SETUP_ROOT}/config/excludes" --timeout "${REQUEST_TIMEOUT:-30}" --temp-dir="${WORK_DIR}" --no-motd --blocking-io --stats --progress -e "ssh -qtl "${TARGET_USER}" -E ${LOG_ROOT}/ssh.log" --log-file=${LOG_ROOT}/rsync.log';
 alias ping='ping -c 4 -q -W ${THREAD_TIMEOUT:-10}';
 alias nc='nc -w ${THREAD_TIMEOUT:-10}';
