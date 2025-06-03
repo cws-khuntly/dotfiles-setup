@@ -52,7 +52,7 @@ function cleanupFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    if [[ -z "${RUN_CLEANUP}" ]] || [[ "${RUN_CLEANUP}" != "${_TRUE}" ]]; then
+    if [[ -z "${IS_CLEANUP_ENABLED}" ]] || [[ "${IS_CLEANUP_ENABLED}" == "${_FALSE}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Cleanup functionality has been disabled, exiting";
         fi
