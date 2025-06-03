@@ -272,7 +272,7 @@ function installLocalFiles()
             fi
         else
             if [[ -d "${INSTALL_PATH}" ]]; then
-                if [[ -n "${BACKUP_ENABLED}" ]] && [[ "${BACKUP_ENABLED}" == "${_TRUE}" ]]; then
+                if [[ -n "${IS_BACKUP_ENABLED}" ]] && [[ "${IS_BACKUP_ENABLED}" == "${_TRUE}" ]]; then
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Installation path ${INSTALL_PATH} exists, taking backup.";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "NOTE:";
