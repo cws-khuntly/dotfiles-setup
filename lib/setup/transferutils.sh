@@ -118,7 +118,7 @@ function transferFiles()
             [[ -n "${function_name}" ]] && unset -v function_name;
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            transferRemoteFiles "${files_to_process}" "${target_host}" "${target_port}" "${target_user} "${target_dir}";
+            transferRemoteFiles "${files_to_process}" "${target_host}" "${target_port}" "${target_user}" "${target_dir}";
             ret_code="${?}";
 
             cname="transferutils.sh";
@@ -265,7 +265,7 @@ function transferLocalFiles()
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output="$(cp -i "${source_file}" "${target_dir}/${target_file}")";
+                    cmd_output="$(cp "${source_file}" "${target_dir}/${target_file}")";
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -477,7 +477,7 @@ function transferRemoteFiles()
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(send-file "--files-from=${sftp_send_file} ${target_user}@${target_host}:${target_dir}")";
+                cmd_output="$(send-file "--files-from=${sftp_send_file}" "${target_user}@${target_host}:${target_dir}")";
                 ret_code="${?}";
 
                 cname="transferutils.sh";
