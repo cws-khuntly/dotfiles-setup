@@ -34,7 +34,7 @@ function uninstallFiles()
     local -i ret_code=0;
     local uninstall_mode;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
     local -i start_epoch;
     local -i end_epoch;
@@ -203,7 +203,7 @@ function uninstallLocalFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    if [[ -s "${INSTALL_CONF}" ]]; then
+    if [[ -f "${INSTALL_CONF}" ]] && [[ -r "${INSTALL_CONF}" ]] && [[ -s "${INSTALL_CONF}" ]]; then
         ## change the IFS
         IFS="${MODIFIED_IFS}";
 
@@ -216,10 +216,10 @@ function uninstallLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
             fi
 
-            removable_entry="$(cut -d "|" -f 3 <<< "${entry}")";
+            entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "removable_entry -> ${removable_entry}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
             fi
 
             if [[ -z "${removable_entry}" ]]; then
@@ -231,20 +231,22 @@ function uninstallLocalFiles()
 
                 continue;
             else
-                if [[ -d "${removable_entry}" ]]; then
+                if [[ -d "$(eval printf "%s" "${entry_target}")" ]] || [[ -L "$(eval printf "%s" "${entry_target}")" ]] || [[ -f "$(eval printf "%s" "${entry_target}")" ]]; then
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing directory ${removable_entry}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -rf ${removable_entry:?}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} $(eval printf "%s" "${entry_target}")";
                     fi
 
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+                    [[ -n "${cname}" ]] && unset -v cname;
+                    [[ -n "${function_name}" ]] && unset -v function_name;
 
-                    cmd_output="$(rm -i --preserve-root -rf "${removable_entry:?}")";
+                    cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_target}")";
                     ret_code="${?}";
 
+                    cname="uninstallutils.sh";
+                    function_name="${cname}#${FUNCNAME[0]}";
+
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "rm/${removable_entry} -> ret_code -> ${ret_code}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${entry_target} -> ret_code -> ${ret_code}";
                     fi
 
                     if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
@@ -252,80 +254,20 @@ function uninstallLocalFiles()
                         (( error_count += 1 ));
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove directory ${removable_entry}.";
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove target ${entry_target}. Please remove manually.";
                         fi
 
                         continue;
                     else
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Directory ${removable_entry} and its content have been removed.";
-                        fi
-                    fi
-                elif [[ -L "${removable_entry}" ]]; then
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing symbolic link ${removable_entry}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: unlink ${removable_entry}";
-                    fi
-
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-                    cmd_output="$(unlink "${removable_entry}")";
-                    ret_code="${?}";
-
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "unlink -> ret_code -> ${ret_code}";
-                    fi
-
-                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
-                    then
-                        (( error_count += 1 ));
-
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to unlink ${removable_entry}.";
-                        fi
-
-                        continue;
-                    else
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Symbolic link ${removable_entry} removed.";
-                        fi
-                    fi
-                elif [[ -f "${removable_entry}" ]]; then
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing file ${removable_entry}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -f ${removable_entry}";
-                    fi
-
-                    [[ -n "${ret_code}" ]] && unset -v ret_code;
-
-                    cmd_output="$(rm -i --preserve-root -f "${removable_entry}")";
-                    ret_code="${?}";
-
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "rm/${removable_entry} -> ret_code -> ${ret_code}";
-                    fi
-
-                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
-                    then
-                        (( error_count += 1 ));
-
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove ${removable_entry}.";
-                        fi
-
-                        continue;
-                    else
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "File ${removable_entry} removed.";
+                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Target ${entry_target} has been removed ";
                         fi
                     fi
                 fi
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
-            [[ -n "${removable_entry}" ]] && unset -v removable_entry;
+            [[ -n "${entry_target}" ]] && unset -v entry_target;
             [[ -n "${entry}" ]] && unset -v entry;
         done
 
@@ -333,31 +275,34 @@ function uninstallLocalFiles()
         IFS="${CURRENT_IFS}";
 
         ## remove the installation directory
-        if [[ -d "${INSTALL_PATH}" ]]; then
+        if [[ -d "${INSTALL_ROOT}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing installation directory ${INSTALL_PATH}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -rf ${INSTALL_PATH:?}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${INSTALL_ROOT}";
             fi
 
-            [[ -n "${ret_code}" ]] && unset -v ret_code;
+            [[ -n "${cname}" ]] && unset -v cname;
+            [[ -n "${function_name}" ]] && unset -v function_name;
 
-            cmd_output="$(rm -i --preserve-root -rf "${INSTALL_PATH:?}")";
+            cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${INSTALL_ROOT}";
             ret_code="${?}";
 
+            cname="uninstallutils.sh";
+            function_name="${cname}#${FUNCNAME[0]}";
+
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "rm/${removable_entry} -> ret_code -> ${ret_code}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${INSTALL_ROOT} -> ret_code -> ${ret_code}";
             fi
 
-            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 ))
+            then
                 (( error_count += 1 ));
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove installation directory ${INSTALL_PATH}.";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to remove target ${INSTALL_ROOT}. Please remove manually.";
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removed installation directory ${INSTALL_PATH}.";
+                    writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "Target ${INSTALL_ROOT} has been removed ";
                 fi
             fi
         fi
@@ -374,7 +319,7 @@ function uninstallLocalFiles()
     [[ -n "${ret_code}" ]] && unset -v ret_code;
     [[ -n "${error_count}" ]] && unset -v error_count;
     [[ -n "${entry}" ]] && unset -v entry;
-    [[ -n "${removable_entry}" ]] && unset -v removable_entry;
+    [[ -n "${entry_target}" ]] && unset -v entry_target;
     [[ -n "${cmd_output}" ]] && unset -v cmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -419,13 +364,12 @@ function uninstallRemoteFiles()
     local -i return_code=0;
     local -i error_count=0;
     local target_host;
-    local target_port;
+    local -i target_port;
     local target_user;
-    local file_removal_script;
-    local entry_command;
-    local removable_entry;
-    local cmd_output;
-    local cleanup_file_list;
+    local sftp_send_file;
+    local entry_target;
+    local uninstall_response;
+    local -i file_counter;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -455,7 +399,7 @@ function uninstallRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${WORK_DIR}";
     fi
 
-    file_removal_script="$(mktemp --tmpdir="${WORK_DIR}")";
+    sftp_send_file="$(mktemp --tmpdir="${WORK_DIR}")";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_removal_script -> ${file_removal_script}";
@@ -489,55 +433,24 @@ function uninstallRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
                 fi
 
-                entry_command="$(cut -d "|" -f 1 <<< "${entry}")";
-                removable_entry="$(cut -d "|" -f 3 <<< "${entry}")";
+                entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_command -> ${entry_command}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "removable_entry -> ${removable_entry}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
                 fi
 
-                if [[ -z "${removable_entry}" ]] || [[ -z "${entry_command}" ]]; then
-                    (( error_count += 1 ));
-
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removable entry was null or empty.";
+                if (( file_counter == 0 )); then
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"rm -i --preserve-root -rf\" \"${entry_target:?}\" >| ${sftp_send_file}";
                     fi
 
-                    continue;
+                    { printf "%s %s %s\n" "rm -i --preserve-root -rf" "${entry_target:?}"; } >| "${sftp_send_file}";
                 else
-                    case "${entry_command}" in
-                        "mkdir")
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting up to remove directory ${removable_entry}";
-                            fi
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"rm -i --preserve-root -rf\" \"${entry_target:?}\" >> ${sftp_send_file}";
+                    fi
 
-                            { printf "%s %s %s\n" "-" "rm -i --preserve-root -rf" "${removable_entry:?}"; } >> "${file_removal_script}";
-                            ;;
-                        "ln")
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting up to remove symbolic link ${removable_entry}";
-                            fi
-
-                            { printf "%s %s %s\n" "-" "unlink" "${removable_entry}"; } >> "${file_removal_script}";
-                            ;;
-                        "cp")
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting up to remove file ${removable_entry}";
-                            fi
-
-                            { printf "%s %s %s\n" "-" "rm -i --preserve-root -f" "${removable_entry:?}"; } >> "${file_removal_script}";
-                            ;;
-                        *)
-                            (( error_count += 1 ));
-
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Unable to determine entry command, cannot generate.";
-                            fi
-
-                            continue;
-                            ;;
-                    esac
+                    { printf "%s %s %s\n" "rm -i --preserve-root -rf" "${entry_target:?}"; } >> "${sftp_send_file}";
                 fi
 
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
@@ -549,23 +462,22 @@ function uninstallRemoteFiles()
             ## restore the original ifs
             IFS="${CURRENT_IFS}";
 
-            if [[ ! -s "${file_removal_script}" ]]; then
+            if [[ ! -s "${sftp_send_file}" ]]; then
                 return_code=1;
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to populate the file cleanup file ${file_removal_script}. Please ensure the file exists and can be written to.";
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Failed to populate the file cleanup file ${sftp_send_file}. Please ensure the file exists and can be written to.";
                 fi
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending requested files to host ${target_host} as user ${target_user}...";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fsftp ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} ${file_removal_script}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${sftp_send_file} ${target_host} ${ssh_port_number} ${target_user}";
                 fi
 
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(fsftp "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "${file_removal_script}")";
+                transferFiles "${TRANSFER_LOCATION_REMOTE}" "${sftp_send_file}|"$(basename "${sftp_send_file}")|"${USABLE_TMP_DIR:-${TMPDIR}}" "${target_host}" "${ssh_port_number}" "${target_user}";
                 ret_code="${?}";
 
                 cname="uninstallutils.sh";
@@ -581,6 +493,37 @@ function uninstallRemoteFiles()
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred during the file removal process on host ${target_host} as user ${target_user}. Please review logs.";
                     fi
+                else
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: installRemoteFiles ${target_host} ${target_port} ${target_user} ${installation_script}";
+                    fi
+
+                    [[ -n "${cname}" ]] && unset -v cname;
+                    [[ -n "${function_name}" ]] && unset -v function_name;
+                    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+                    uninstall_response="$(fssh "${SSH_CONFIG_FILE}" "${target_host}" "${target_port}" "${target_user}" "${USABLE_TMP_DIR:-${TMPDIR}}/$(basename "${sftp_send_file}")")";
+                    ret_code="${?}";
+
+                    cname="uninstallutils.sh";
+                    function_name="${cname}#${FUNCNAME[0]}";
+
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "install_response -> ${install_response}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installRemoteFiles -> ret_code -> ${ret_code}";
+                    fi
+
+                    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) || [[ -z "${install_response}" ]]; then
+                        [[ -z "${ret_code}" ]] && return_code=1 || [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while processing action ${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user}. Please review logs.";
+                        fi
+                    else
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "${TARGET_ACTION} on host ${target_hostname} as user ${target_ssh_user} has completed with response ${install_response}.";
+                        fi
+                    fi
                 fi
             fi
         else
@@ -594,9 +537,36 @@ function uninstallRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_file_list -> ${cleanup_file_list}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_REMOTE} ${USABLE_TMP_DIR:-${TMPDIR}}/${sftp_send_file} ${target_hostname} ${target_ssh_port} ${target_ssh_user}";
+    fi
 
-    cleanup_file_list="${file_removal_script}"
+    [[ -n "${cname}" ]] && unset -v cname;
+    [[ -n "${function_name}" ]] && unset -v function_name;
+    [[ -n "${ret_code}" ]] && unset -v ret_code;
+
+    cleanupFiles "${CLEANUP_LOCATION_REMOTE}" "${USABLE_TMP_DIR:-${TMPDIR}}/${sftp_send_file}" "${target_hostname}" "${target_ssh_port}" "${target_ssh_user}";
+    ret_code="${?}";
+
+    cname="setup.sh";
+    function_name="${cname}#${FUNCNAME[0]}";
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles / ${CLEANUP_LOCATION_REMOTE} -> ret_code -> ${ret_code}";
+    fi
+
+    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+        [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "WARN" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred while executing cleanupFiles ${CLEANUP_LOCATION_REMOTE}. Please review logs.";
+        fi
+    else
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "INFO" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanupFiles ${CLEANUP_LOCATION_REMOTE} completed successfully.";
+        fi
+    fi
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cleanup_file_list -> ${cleanup_file_list}";
@@ -607,10 +577,10 @@ function uninstallRemoteFiles()
     [[ -n "${function_name}" ]] && unset -v function_name;
     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-    cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_file_list}";
+    cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${sftp_send_file}";
     ret_code="${?}";
 
-    cname="uninstallutils.sh";
+    cname="setup.sh";
     function_name="${cname}#${FUNCNAME[0]}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -634,11 +604,10 @@ function uninstallRemoteFiles()
     [[ -n "${target_host}" ]] && unset -v target_host;
     [[ -n "${target_port}" ]] && unset -v target_port;
     [[ -n "${target_user}" ]] && unset -v target_user;
-    [[ -n "${file_removal_script}" ]] && unset -v file_removal_script;
-    [[ -n "${entry_command}" ]] && unset -v entry_command;
-    [[ -n "${removable_entry}" ]] && unset -v removable_entry;
-    [[ -n "${cmd_output}" ]] && unset -v cmd_output;
-    [[ -n "${cleanup_file_list}" ]] && unset -v cleanup_file_list;
+    [[ -n "${sftp_send_file}" ]] && unset -v sftp_send_file;
+    [[ -n "${entry_target}" ]] && unset -v entry_target;
+    [[ -n "${uninstall_response}" ]] && unset -v uninstall_response;
+    [[ -n "${file_counter}" ]] && unset -v file_counter;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
