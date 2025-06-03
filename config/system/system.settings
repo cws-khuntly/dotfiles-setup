@@ -33,8 +33,9 @@ alias rm='rm -i --preserve-root';
 alias chown='chown --preserve-root -Rh';
 alias chmod='chmod --preserve-root -R';
 alias mv='mv -i';
-alias cp='cp -i';
-alias ln='ln -i';
+alias cp='cp -i -p';
+alias ln='ln -i -s';
+alias mkdir='mkdir -pv';
 alias mktemp='mktemp --tmpdir=${WORK_DIR}';
 
 set -o notify;

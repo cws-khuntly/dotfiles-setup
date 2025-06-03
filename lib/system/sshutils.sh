@@ -209,12 +209,12 @@ function generateSshKeys()
     if [[ ! -d "${HOME}"/.ssh ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "SSH user configuration directory does not exist. Creating.";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${HOME}/.ssh";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir ${HOME}/.ssh";
         fi
 
         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-        cmd_output="$(mkdir -pv "${HOME}"/.ssh)";
+        cmd_output="$(mkdir "${HOME}"/.ssh)";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -283,13 +283,13 @@ function generateSshKeys()
                         fi
                     else
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv -i ${WORK_DIR}/${ssh_key_filename} ${HOME}/.ssh/${ssh_key_filename}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv -i ${WORK_DIR}/${ssh_key_filename}.pub ${HOME}/.ssh/${ssh_key_filename}.pub";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${WORK_DIR}/${ssh_key_filename} ${HOME}/.ssh/${ssh_key_filename}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${WORK_DIR}/${ssh_key_filename}.pub ${HOME}/.ssh/${ssh_key_filename}.pub";
                         fi
 
                         ## relocate the keyfiles to the user home directory;
-                        mv -i "${WORK_DIR}/${ssh_key_filename}" "${HOME}/.ssh/${ssh_key_filename}";
-                        mv -i "${WORK_DIR}/${ssh_key_filename}.pub" "${HOME}/.ssh/${ssh_key_filename}.pub";
+                        mv "${WORK_DIR}/${ssh_key_filename}" "${HOME}/.ssh/${ssh_key_filename}";
+                        mv "${WORK_DIR}/${ssh_key_filename}.pub" "${HOME}/.ssh/${ssh_key_filename}.pub";
 
                         ## make sure they exist;
                         if [[ ! -f "${HOME}/.ssh/${ssh_key_filename}" ]] || [[ ! -f "${HOME}/.ssh/${ssh_key_filename}.pub" ]]; then

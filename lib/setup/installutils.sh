@@ -242,12 +242,12 @@ function installLocalFiles()
         if [[ ! -d "${INSTALL_PATH}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${INSTALL_PATH}...";
-                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${INSTALL_PATH}";
+                writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir ${INSTALL_PATH}";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output="$(mkdir -pv "${INSTALL_PATH}")";
+            cmd_output="$(mkdir "${INSTALL_PATH}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -355,13 +355,13 @@ function installLocalFiles()
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating directory ${entry_target}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${entry_target}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir ${entry_target}";
                         fi
 
                         [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                         [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                        cmd_output="$(mkdir -pv "$(eval printf "%s" "${entry_target}")")";
+                        cmd_output="$(mkdir "$(eval printf "%s" "${entry_target}")")";
                         ret_code="${?}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -486,14 +486,14 @@ function installLocalFiles()
 
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating symbolic link ${entry_source} -> ${entry_target}";
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln -i -s eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
+                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
                             fi
 
                             if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then
                                 [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                cmd_output="$(ln -i -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
+                                cmd_output="$(ln "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
                                 ret_code="${?}";
 
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -562,13 +562,13 @@ function installLocalFiles()
                             if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Copying file ${entry_source} to ${entry_target}";
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp -i -p ${entry_source} ${entry_target}";
+                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp ${entry_source} ${entry_target}";
                                 fi
 
                                 [[ -n "${cmd_output}" ]] && unset -v cmd_output;
                                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                                cmd_output="$(cp -i -p "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
+                                cmd_output="$(cp "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
                                 ret_code="${?}";
 
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -727,10 +727,10 @@ function installRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${WORK_DIR}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp";
     fi
 
-    installation_script="$(mktemp --tmpdir="${WORK_DIR}")";
+    installation_script="$(mktemp)";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installation_script -> ${installation_script}";

@@ -17,7 +17,7 @@
 #==============================================================================
 
 # check for and create
-[[ ! -d "${WORK_DIR}" ]] && mkdir -p "${WORK_DIR}";
+[[ ! -d "${WORK_DIR}" ]] && mkdir "${WORK_DIR}";
 
 generateSshKeys;
 
@@ -483,10 +483,10 @@ function runInstallRemoteFiles()
             fi
         else
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp --tmpdir=${WORK_DIR}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mktemp";
             fi
 
-            installation_script="$(mktemp --tmpdir="${WORK_DIR}")";
+            installation_script="$(mktemp)";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "installation_script -> ${installation_script}";
