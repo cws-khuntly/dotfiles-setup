@@ -283,11 +283,11 @@ function installLocalFiles()
                     ( cd "${INSTALL_PATH}" || return 1; tar -cf - ./*) | ${ARCHIVE_PROGRAM} > "$(dirname "${INSTALL_PATH}")/${PACKAGE_NAME}.${BACKUP_DATE_STAMP}.${ARCHIVE_FILE_EXTENSION}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${INSTALL_PATH:?}/*";
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -rf ${INSTALL_PATH:?}/*";
                     fi
                 fi
 
-                rm -rf "${INSTALL_PATH:?}"/*;
+                rm -i --preserve-root -rf "${INSTALL_PATH:?}"/*;
             fi
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -765,7 +765,7 @@ function installRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${installation_script}" ]] && rm -f "${installation_script}";
+    [[ -f "${installation_script}" ]] && rm -i --preserve-root -f "${installation_script}";
 
     [[ -n "${initial_transfer_list}" ]] && unset -v initial_transfer_list;
     [[ -n "${ret_code}" ]] && unset -v ret_code;

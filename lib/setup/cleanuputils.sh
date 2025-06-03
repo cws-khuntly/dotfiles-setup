@@ -287,7 +287,7 @@ function cleanupLocalFiles()
             fi
         elif [[ -e "${eligible_file}" ]] && [[ -f "${eligible_file}" ]] && [[ -w "${eligible_file}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${eligible_file:?}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -f ${eligible_file:?}";
             fi
 
             [[ -n "${cmd_output}" ]] && unset -v cmd_output;
@@ -557,7 +557,7 @@ function cleanupRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${file_cleanup_file}" ]] && rm -f "${file_cleanup_file}";
+    [[ -f "${file_cleanup_file}" ]] && rm -i --preserve-root -f "${file_cleanup_file}";
 
     [[ -n "${file_counter}" ]] && unset -v file_counter;
     [[ -n "${ret_code}" ]] && unset -v ret_code;

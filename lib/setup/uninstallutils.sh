@@ -234,12 +234,12 @@ function uninstallLocalFiles()
                 if [[ -d "${removable_entry}" ]]; then
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing directory ${removable_entry}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${removable_entry:?}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -rf ${removable_entry:?}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output="$(rm -rf "${removable_entry:?}")";
+                    cmd_output="$(rm -i --preserve-root -rf "${removable_entry:?}")";
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -294,12 +294,12 @@ function uninstallLocalFiles()
                 elif [[ -f "${removable_entry}" ]]; then
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing file ${removable_entry}";
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${removable_entry}";
+                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -f ${removable_entry}";
                     fi
 
                     [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                    cmd_output="$(rm -f "${removable_entry}")";
+                    cmd_output="$(rm -i --preserve-root -f "${removable_entry}")";
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -336,12 +336,12 @@ function uninstallLocalFiles()
         if [[ -d "${INSTALL_PATH}" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Removing installation directory ${INSTALL_PATH}";
-                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${INSTALL_PATH:?}";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -i --preserve-root -rf ${INSTALL_PATH:?}";
             fi
 
             [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-            cmd_output="$(rm -rf "${INSTALL_PATH:?}")";
+            cmd_output="$(rm -i --preserve-root -rf "${INSTALL_PATH:?}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -512,7 +512,7 @@ function uninstallRemoteFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting up to remove directory ${removable_entry}";
                             fi
 
-                            { printf "%s %s %s\n" "-" "rm -rf" "${removable_entry:?}"; } >> "${file_removal_script}";
+                            { printf "%s %s %s\n" "-" "rm -i --preserve-root -rf" "${removable_entry:?}"; } >> "${file_removal_script}";
                             ;;
                         "ln")
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -526,7 +526,7 @@ function uninstallRemoteFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Setting up to remove file ${removable_entry}";
                             fi
 
-                            { printf "%s %s %s\n" "-" "rm -f" "${removable_entry:?}"; } >> "${file_removal_script}";
+                            { printf "%s %s %s\n" "-" "rm -i --preserve-root -f" "${removable_entry:?}"; } >> "${file_removal_script}";
                             ;;
                         *)
                             (( error_count += 1 ));
