@@ -471,14 +471,14 @@ function transferRemoteFiles()
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending requested files to host ${target_host} as user ${target_user}...";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: send-file "--files-from="${sftp_send_file}" "${target_user}@${target_host}:${target_dir}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: send-file --files-from=${sftp_send_file} ${target_user}@${target_host}:${target_dir}";
                 fi
 
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(send-file "--files-from=${sftp_send_file}" "${target_user}@${target_host}:${target_dir}")";
+                cmd_output="$(send-file "--files-from=${sftp_send_file} ${target_user}@${target_host}:${target_dir}")";
                 ret_code="${?}";
 
                 cname="transferutils.sh";
