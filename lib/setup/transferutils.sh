@@ -351,11 +351,10 @@ function transferRemoteFiles()
     local target_host;
     local -i target_port;
     local target_user;
+    local target_dir;
     local sftp_send_file;
     local files_to_process;
     local eligibleFile;
-    local target_file;
-    local target_dir;
     local file_counter;
     local cleanup_file_list;
     local cmd_output;
@@ -374,18 +373,20 @@ function transferRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided arguments: ${*}";
     fi
 
-    (( ${#} != 4 )) && return_code=3;
+    (( ${#} != 5 )) && return_code=3;
 
     file_list="${1}";
     target_host="${2}";
     target_port="${3}";
     target_user="${4}";
+    target_dir="${5}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_list -> ${file_list}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_dir -> ${target_dir}";
     fi
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -430,45 +431,31 @@ function transferRemoteFiles()
 
                 [[ -z "${eligible_file}" ]] && continue;
 
-                source_file="$(awk -F "|" '{print $1}' <<< "${eligible_file}")";
-                target_file="$(basename "$(awk -F "|" '{print $1}' <<< "${eligible_file}")")";
-                target_dir="$(awk -F "|" '{print $2}' <<< "${eligible_file}")";
-
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_file -> ${source_file}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file -> ${target_file}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_dir -> ${target_dir}";
-                fi
-
-                if [[ -n "${source_file}" ]] && [[ -n "${target_file}" ]] && [[ -n "${target_dir}" ]]; then
-                    if [[ -n "${source_file}" ]] && [[ -f "${source_file}" ]] && [[ -r "${source_file}" ]]; then
-                        if (( file_counter == 0 )); then
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" put ${target_file} ${target_dir} >| ${sftp_send_file}";
-                            fi
-
-                            { printf "%s %s %s\n" "put" "${source_file}" "${target_dir}/${target_file}"; } >| "${sftp_send_file}";
-                        else
-                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" put ${target_file} ${target_dir} >> ${sftp_send_file}";
-                            fi
-
-                            { printf "%s %s %s\n" "put" "${source_file}" "${target_dir}/${target_file}"; } >> "${sftp_send_file}";
+                if [[ -n "${source_file}" ]] && [[ -f "${source_file}" ]] && [[ -r "${source_file}" ]]; then
+                    if (( file_counter == 0 )); then
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s\\n\" ${eligible_file} >| ${sftp_send_file}";
                         fi
+
+                        { printf "%s\n" "${eligible_file}"; } >| "${sftp_send_file}";
                     else
-                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Source file ${source_file} does not exist. Skipping entry.";
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s\\n\" ${eligible_file} >> ${sftp_send_file}";
                         fi
 
-                        continue;
+                        { printf "%s\n" "${eligible_file}" >> "${sftp_send_file}";
+                    fi
+                else
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Source file ${eligible_file} does not exist. Skipping entry.";
                     fi
 
-                    (( file_counter += 1 ));
+                    continue;
+                fi
 
-                    [[ -n "${target_dir}" ]] && unset -v target_dir;
-                    [[ -n "${target_file}" ]] && unset -v target_file;
-                    [[ -n "${source_file}" ]] && unset -v source_file;
-                    [[ -n "${eligible_file}" ]] && unset -v eligible_file;
+                (( file_counter += 1 ));
+
+                [[ -n "${eligible_file}" ]] && unset -v eligible_file;
                 fi
             done
 
@@ -481,21 +468,21 @@ function transferRemoteFiles()
             else
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Sending requested files to host ${target_host} as user ${target_user}...";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: fsftp ${SCRIPT_ROOT}/config/setup/sshconfig ${target_host} ${target_port} ${target_user} ${sftp_send_file}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: (send-file "--files-from="${sftp_send_file}" "${target_user}@${target_host}:${target_dir}";
                 fi
 
                 [[ -n "${function_name}" ]] && unset -v function_name;
                 [[ -n "${cname}" ]] && unset -v cname;
                 [[ -n "${ret_code}" ]] && unset -v ret_code;
 
-                cmd_output="$(fsftp "${SCRIPT_ROOT}/config/setup/sshconfig" "${target_host}" "${target_port}" "${target_user}" "${sftp_send_file}")";
+                cmd_output="$(send-file "--files-from="${sftp_send_file}" "${target_user}@${target_host}:${target_dir}")";
                 ret_code="${?}";
 
                 cname="transferutils.sh";
                 function_name="${cname}#${FUNCNAME[0]}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "sftp / sftp_send_file -> ret_code -> ${ret_code}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "send-file / sftp_send_file -> ret_code -> ${ret_code}";
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
