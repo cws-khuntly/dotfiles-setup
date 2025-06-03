@@ -15,7 +15,7 @@ jobs:
       contents: read
     strategy:
       matrix:
-        match: [ ./bin/* ./lib/system/*.sh ./lib/system/*.settings ./lib/setup/*.sh ./lib/setup/*.settings ./lib/*.sh **/*.sh ]
+        match: [ ./bin/* ./lib/system/*.sh ./lib/setup/*.sh ./config/system/*.settings ./lib/setup/*.settings ./lib/*.sh **/*.sh ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
