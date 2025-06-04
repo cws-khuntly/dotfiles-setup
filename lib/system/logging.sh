@@ -22,10 +22,10 @@ if [[ -n "${LOGGING_PROPERTIES}" ]]; then
     source "${LOGGING_PROPERTIES}";
 else
     if [[ -r "${SCRIPT_ROOT}/config/system/logging.properties" ]] && [[ -s "${SCRIPT_ROOT}/config/system/logging.properties" ]]; then
-        # shellcheck source=../../config/system/logging.properties
+        # shellcheck source=/dev/null
         source "${SCRIPT_ROOT}/config/system/logging.properties";
     elif [[ -r "/usr/local/config/logging.properties" ]] && [[ -s "/usr/local/config/logging.properties" ]]; then
-        source "/usr/local/config/logging.properties"; ## if its here, use it
+        source "/usr/local/config/logging.properties";
     else
         printf "\e[00;31m%s\e[00;32m\n" "Unable to load logging configuration. Shutting down." >&2;
     fi
@@ -194,8 +194,6 @@ function writeLogEntryToFile()
     esac
 
     ## TODO
-    set -o noclobber;
-
     printf "${CONVERSION_PATTERN}\n" "${log_date}" "${log_file}" "${log_level}" "${log_pid}" "${log_source}" "${log_line}" "${log_method}" "${log_message}" >> "${LOG_ROOT}/${log_file}";
 
     if [[ -n "${current_clobber}" ]] && [[ "${current_clobber}" == "off" ]]; then set +o noclobber; fi
