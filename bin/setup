@@ -1091,40 +1091,38 @@ else
         [[ -n "${SOURCE_URL}" ]] && source "${CLONE_TO}/${PACKAGE_SETUP_FILE}";
         [[ -z "${SOURCE_URL}" ]] && source "${PACKAGE_SETUP_FILE}";
 
-        if [[ -n "${CUSTOMIZE_BUILD}" ]] && [[ "${CUSTOMIZE_BUILD}" == "${_TRUE}" ]]; then
-            FUNCTION_NAME="${CNAME}#loadBuildCustomizations";
+        FUNCTION_NAME="${CNAME}#loadBuildCustomizations";
 
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Build customization was set to ${_TRUE}. Runing custom setup script if found.";
+        fi
+
+        if [[ -f "${BUILD_PATH}/lib/setup/pre-install.sh" ]] && [[ -r "${BUILD_PATH}/lib/setup/pre-install.sh" ]] && [[ -s "${BUILD_PATH}/lib/setup/pre-install.sh" ]]; then
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Build customization was set to ${_TRUE}. Runing custom setup script if found.";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found ${BUILD_PATH}/lib/setup/pre-install.sh, loading";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${BUILD_ROOT}/lib/setup/pre-install.sh";
             fi
 
-            if [[ -f "${BUILD_PATH}/lib/setup/custom.sh" ]] && [[ -r "${BUILD_PATH}/lib/setup/custom.sh" ]] && [[ -s "${BUILD_PATH}/lib/setup/custom.sh" ]]; then
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found ${BUILD_PATH}/lib/setup/custom.sh, loading";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${BUILD_PATH}/lib/setup/custom.sh";
+            # shellcheck source=/dev/null
+            source "${BUILD_PATH}/lib/setup/pre-install.sh";
+
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: customizeBuild";
+            fi
+
+            pre-install;
+            RET_CODE="${?}";
+
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+            fi
+
+            if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running pre-install tasks. Return code -> ${RET_CODE}";
+                    writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running pre-install tasks. Return code -> ${RET_CODE}";
                 fi
-
-                # shellcheck source=/dev/null
-                source "${BUILD_PATH}/lib/setup/custom.sh";
-
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: customizeBuild";
-                fi
-
-                customizeBuild;
-                RET_CODE="${?}";
-
-                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
-                fi
-
-                if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may fail the setup. Return code -> ${RET_CODE}";
-                        writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running custom tasks. This may fail the setup. Return code -> ${RET_CODE}";
-                    fi
-                 fi
-             fi
+            fi
         fi
 
         FUNCTION_NAME="${CNAME}#buildTargetList";
@@ -1204,6 +1202,34 @@ else
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "INFO" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
                         writeLogEntry "CONSOLE" "STDOUT" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Action ${TARGET_ACTION:-${RUNTIME_ACTION_COMBINED}} completed successfully on host ${TARGET_HOST} as user ${TARGET_USER}";
+                    fi
+
+                    if [[ -f "${BUILD_PATH}/lib/setup/post-install.sh" ]] && [[ -r "${BUILD_PATH}/lib/setup/post-install.sh" ]] && [[ -s "${BUILD_PATH}/lib/setup/post-install.sh" ]]; then
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found ${BUILD_PATH}/lib/setup/post-install.sh, loading";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${BUILD_ROOT}/lib/setup/post-install.sh";
+                        fi
+
+                        # shellcheck source=/dev/null
+                        source "${BUILD_PATH}/lib/setup/post-install.sh";
+
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: customizeBuild";
+                        fi
+
+                        post-install;
+                        RET_CODE="${?}";
+
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "RET_CODE -> ${RET_CODE}";
+                        fi
+
+                        if [[ -z "${RET_CODE}" ]] || (( RET_CODE != 0 )); then
+                            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                                writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running post-install tasks. Return code -> ${RET_CODE}";
+                                writeLogEntry "CONSOLE" "STDERR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "An error occurred running post-install tasks. Return code -> ${RET_CODE}";
+                            fi
+                        fi
                     fi
                 fi
 
