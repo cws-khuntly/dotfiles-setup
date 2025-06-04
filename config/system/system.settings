@@ -21,7 +21,7 @@
 declare -rx SSH_AUTH_SOCK="${XDG_RUNTIME_DIR:-/run/user/${UID}}/ssh-agent.socket" 2>/dev/null;
 declare -ix REQUEST_TIMEOUT=10;
 
-alias sftp='sftp -F "${SETUP_ROOT}/config/system/sshconfig" -qr -P "${TARGET_PORT:-22}";
+alias sftp='sftp -F "${SETUP_ROOT}/config/system/sshconfig" -qr -P "${TARGET_PORT:-22}"';
 alias ssh='ssh -F "${SETUP_ROOT}/config/system/sshconfig" -ql "${TARGET_USER}" -p "${TARGET_PORT:-22}"';
 alias ssh-keygen='ssh-keygen -C "" -N ""';
 alias ssh-keyscan='ssh-keyscan -4 -T "${REQUEST_TIMEOUT:-30} -F';
