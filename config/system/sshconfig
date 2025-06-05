@@ -15,8 +15,7 @@ Host *
     ForwardAgent                = no
     ForwardX11                  = no
     ForwardX11Trusted           = yes
-    GlobalKnownHostsFile        = /etc/ssh/known_hosts
-    UserKnownHostsFile          = ~/.ssh/known_hosts
+    UserKnownHostsFile          = %WORK_DIR%/.ssh/known_hosts
     HashKnownHosts              = yes
     HostbasedAuthentication     = no
     PubkeyAuthentication        = yes
