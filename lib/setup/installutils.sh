@@ -202,6 +202,7 @@ function installLocalFiles()
     local -i error_count=0;
     local install_archive;
     local entry;
+    local is_root_dir;
     local entry_command;
     local entry_source;
     local entry_target;
@@ -318,12 +319,14 @@ function installLocalFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
                     fi
 
+                    is_root_entry="$(cut -d "|" -f 1 <<< "${entry}")";
                     entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
                     entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
                     recurse_permissions="$(cut -d "|" -f 5 <<< "${entry}")";
                     exempt_from_purge="$(cut -d "|" -f 6 <<< "${entry}")";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "DEBUG" "${?}" "${cname}" "${LINENO}" "${function_name}" "is_root_entry -> ${is_root_entry}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_permissions -> ${entry_permissions}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "recurse_permissions -> ${recurse_permissions}";
@@ -339,7 +342,8 @@ function installLocalFiles()
 
                         continue;
                     else
-                        if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -d "${entry_target}" ]]; then
+                        if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && \
+                            [[ -n "${is_root_dir}" ]] && [[ "${is_root_dir}" == "${_TRUE}" ]] && [[ -d "${entry_target}" ]]; then
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} $(eval printf "%s" "${entry_target}")";
                             fi
@@ -416,6 +420,7 @@ function installLocalFiles()
                     [[ -n "${entry_permissions}" ]] && unset entry_permissions;
                     [[ -n "${recurse_permissions}" ]] && unset recurse_permissions;
                     [[ -n "${exempt_from_purge}" ]] && unset exempt_from_purge;
+                    [[ -n "${is_root_dir}" ]] && unset is_root_dir;
                     [[ -n "${entry}" ]] && unset entry;
                 done
 
