@@ -475,26 +475,12 @@ function installLocalFiles()
                             continue;
                             ;;
                         "ln")
-                            if [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]] && [[ -L "$(eval printf "%s" "${entry_target}")" ]]; then
-                                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${entry_target}";
-                                fi
-
-                                [[ -n "${cname}" ]] && unset cname;
-                                [[ -n "${function_name}" ]] && unset function_name;
-
-                                cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_target}")";
-
-                                cname="setup.sh";
-                                function_name="${cname}#${FUNCNAME[0]}";
-                            fi
-
                             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "Creating symbolic link ${entry_source} -> ${entry_target}";
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
                             fi
 
-                            if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then
+                            if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]] && [[ ! -L "$(eval printf "%s" "${entry_source}")" ]]; then
                                 [[ -n "${cmd_output}" ]] && unset cmd_output;
                                 [[ -n "${ret_code}" ]] && unset ret_code;
 
