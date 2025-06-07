@@ -92,7 +92,7 @@ function getHostKeys()
 
             if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${does_key_exist}" ]]; then
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-                    writeLogEntry "FILE" "wARN" "${$}" "${cname}" "${LINENO}" "${function_name}" "Key for host ${target_host} does not currently exist in ${known_hosts_file}";
+                    writeLogEntry "FILE" "WARN" "${$}" "${cname}" "${LINENO}" "${function_name}" "Key for host ${target_host} does not currently exist in ${known_hosts_file}";
                 fi
             fi
 
