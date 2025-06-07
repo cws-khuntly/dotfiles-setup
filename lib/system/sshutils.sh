@@ -160,10 +160,11 @@ function getHostKeys()
                 [[ -n "${keytype}" ]] && unset keytype;
                 [[ -n "${does_key_exist}" ]] && unset does_key_exist;
                 [[ -n "${remote_ssh_key}" ]] && unset remote_ssh_key;
-            done
+        fi
+
+        done
 
         (( error_count >= ${#SSH_HOST_KEYS[*]} )) && return_code="${error_count}";
-        fi
     fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
