@@ -26,18 +26,18 @@ function frsync()
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
 
-    local cname="sshutils.sh";
+    local cname="rsyncutils.sh";
     local function_name="${cname}#${FUNCNAME[0]}";
     local -i return_code=0;
     local -i error_count=0;
-	local -i ret_code;
+    local -i ret_code;
     local target_host;
     local -i target_port;
-	local target_user;
-	local target_transport;
-	local transfer_type;
-	local source_file;
-	local target_file;
+    local target_user;
+    local target_transport;
+    local transfer_type;
+    local source_file;
+    local target_file;
     local -i start_epoch;
     local -i end_epoch;
     local -i runtime;
@@ -57,30 +57,30 @@ function frsync()
 
     target_host="${1}";
     target_port="${2}";
-	target_user="${3}";
-	target_transport="${4}";
-	transfer_type="${5}";
-	source_file="${6}";
-	target_file="${7}";
+    target_user="${3}";
+    target_transport="${4}";
+    transfer_type="${5}";
+    source_file="${6}";
+    target_file="${7}";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_host -> ${target_host}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_transport -> ${target_transport}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_type -> ${transfer_type}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_file -> ${source_file}";
-		writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file -> ${target_file}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_port -> ${target_port}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_user -> ${target_user}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_transport -> ${target_transport}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "transfer_type -> ${transfer_type}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "source_file -> ${source_file}";
+        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "target_file -> ${target_file}";
     fi
 
-	if [[ ! -f "${source_file}" ]] && [[ ! -r "${source_file}" ]]; then
-		return_code=1;
+    if [[ ! -f "${source_file}" ]] && [[ ! -r "${source_file}" ]]; then
+        return_code=1;
 
-		if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-			writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided source file ${source_file} could not be found or was not readable.";
-		fi
-	else
-	    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+            writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "Provided source file ${source_file} could not be found or was not readable.";
+        fi
+    else
+        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport:-_{SSH_TRANSPORT_TYPE}} ${target_host} ${target_port:-${SSH_PORT_NUMBER}}";
         fi
 
@@ -104,42 +104,68 @@ function frsync()
                 writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred checking host availability. Please review logs.";
             fi
         else
-            [[ -n "${cmd_output}" ]] && unset cmd_output;
+            if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${target_host} ${target_port:-${SSH_PORT_NUMBER}} ${target_user} ${target_transport:-${SSH_TRANSPORT_TYPE}}";
+            fi
+
+            [[ -n "${cname}" ]] && unset cname;
+            [[ -n "${function_name}" ]] && unset function_name;
             [[ -n "${ret_code}" ]] && unset ret_code;
 
-            case "${transfer_type}" in
-                "${TRANSFER_LOCATION_LOCAL}")
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rsync ${target_user}@${target_host}:${source_file} ${target_file}";
-                    fi
-
-		            cmd_output="$(rsync "${target_user}@${target_host}:${source_file}" "${target_file}")";
-		            ;;
-                "${TRANSFER_LOCATION_REMOTE}")
-                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rsync ${source_file} ${target_user}@${target_host}:${target_file}";
-                    fi
-
-		            cmd_output="$(rsync "${source_file}" "${target_user}@${target_host}:${target_file}")";
-		            ;;
-            esac
-
+            copyKeysToTarget "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}" "${target_user}" "${target_transport:-${SSH_TRANSPORT_TYPE}}"
             ret_code="${?}";
 
+            cname="sshutils.sh";
+            function_name="${cname}#${FUNCNAME[0]}";
+
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-			    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
-			    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "rsync -> ret_code -> ${ret_code}";
-		    fi
-
-		    if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${verify_response}" ]] || (( verify_response != 0 )); then
-			    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
-
-			    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
-				    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred sending source file ${source_file} to remote host ${target_host}.";
-			    fi
+                writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "ret_code -> ${ret_code}";
             fi
-		fi
-	fi
+
+            if [[ -z "${ret_code}" ]] || (( ret_code != 0 )); then
+                [[ -z "${ret_code}" ]] && return_code="1" || return_code="${ret_code}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred copying SSH keys to host ${target_host} as ${target_user}. Please review logs.";
+                fi
+            else
+                [[ -n "${cmd_output}" ]] && unset cmd_output;
+                [[ -n "${ret_code}" ]] && unset ret_code;
+
+                case "${transfer_type}" in
+                    "${TRANSFER_LOCATION_LOCAL}")
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rsync ${target_user}@${target_host}:${source_file} ${target_file}";
+                        fi
+
+                        cmd_output="$(rsync "${target_user}@${target_host}:${source_file}" "${target_file}")";
+                        ;;
+                    "${TRANSFER_LOCATION_REMOTE}")
+                        if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rsync ${source_file} ${target_user}@${target_host}:${target_file}";
+                        fi
+
+                        cmd_output="$(rsync "${source_file}" "${target_user}@${target_host}:${target_file}")";
+                        ;;
+                esac
+
+                ret_code="${?}";
+
+                if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "cmd_output -> ${cmd_output}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "rsync -> ret_code -> ${ret_code}";
+                fi
+
+                if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${verify_response}" ]] || (( verify_response != 0 )); then
+                    [[ -z "${ret_code}" ]] && return_code=1 || return_code="${ret_code}";
+
+                    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+                        writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred sending source file ${source_file} to remote host ${target_host}.";
+                    fi
+                fi
+            fi
+        fi
+    fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
@@ -150,9 +176,9 @@ function frsync()
     [[ -n "${target_user}" ]] && unset target_port;
     [[ -n "${target_transport}" ]] && unset target_user;
     [[ -n "${transfer_type}" ]] && unset target_transport;
-	[[ -n "${source_file}" ]] && unset source_file;
-	[[ -n "${target_file}" ]] && unset target_file;
-	[[ -n "${cmd_output}" ]] && unset cmd_output;
+    [[ -n "${source_file}" ]] && unset source_file;
+    [[ -n "${target_file}" ]] && unset target_file;
+    [[ -n "${cmd_output}" ]] && unset cmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";

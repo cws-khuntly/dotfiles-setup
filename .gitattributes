@@ -1,5 +1,5 @@
 # Auto detect text files and perform LF normalization
-* text eol=lf
+* text eol=lf filter=tabspace
 
 #
 # The above will handle all files NOT found below
@@ -55,4 +55,3 @@
 # These files are text and should be normalized (Convert crlf => lf)
 *.gitattributes text
 .gitignore text
-
