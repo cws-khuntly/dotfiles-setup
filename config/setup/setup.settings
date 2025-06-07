@@ -18,6 +18,6 @@
 #
 #==============================================================================
 
-alias send-file='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from={"${SETUP_ROOT}/config/excludes"} --timeout "${REQUEST_TIMEOUT:-30}" --temp-dir="${WORK_DIR}" --no-motd --blocking-io --stats --progress -e "ssh -qtl "${TARGET_USER}" -E ${LOG_ROOT}/ssh.log" --log-file=${LOG_ROOT}/rsync.log';
-alias deployFiles='${HOME}/bin/setup -u ${LOGNAME} -a deployFiles';
-alias deployAndInstall='${HOME}/bin/setup -u ${LOGNAME} -a deployAndInstall';
+alias send-file='rsync -avz --append --safe-links --delete --delete-excluded --exclude-from={"${SETUP_ROOT}/config/excludes"} --timeout "${REQUEST_TIMEOUT:-30}" --temp-dir="${WORK_DIR}" --no-motd --blocking-io --stats --progress -e "ssh -qTl \"${LOGNAME}\" -E \"${LOG_ROOT}/ssh.log\"" --log-file="${LOG_ROOT}/rsync.log"';
+alias deployFiles='${HOME}/bin/setup -u "${LOGNAME}" -a deployFiles';
+alias deployAndInstall='${HOME}/bin/setup -u "${LOGNAME}" -a deployAndInstall';
