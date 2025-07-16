@@ -40,7 +40,7 @@ alias mktemp='mktemp --tmpdir="${WORK_DIR}"';
 alias host='host -N 0';
 alias nc='nc -zw "${REQUEST_TIMEOUT:-10}"';
 alias nmap='nmap -sp';
-alias unset='unset -v';
+alias unset='builtin unset -v';
 
 set -o notify;
 set -o monitor;
