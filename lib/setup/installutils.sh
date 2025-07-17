@@ -319,18 +319,18 @@ function installLocalFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry -> ${entry}";
                     fi
 
-                    is_root_entry="$(cut -d "|" -f 1 <<< "${entry}")";
                     entry_target="$(cut -d "|" -f 3 <<< "${entry}")";
                     entry_permissions="$(cut -d "|" -f 4 <<< "${entry}")";
                     recurse_permissions="$(cut -d "|" -f 5 <<< "${entry}")";
                     exempt_from_purge="$(cut -d "|" -f 6 <<< "${entry}")";
+                    is_root_entry="$(cut -d "|" -f 7 <<< "${entry}")";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                        writeLogEntry "FILE" "DEBUG" "${?}" "${cname}" "${LINENO}" "${function_name}" "is_root_entry -> ${is_root_entry}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_target -> ${entry_target}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "entry_permissions -> ${entry_permissions}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "recurse_permissions -> ${recurse_permissions}";
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "exempt_from_purge -> ${exempt_from_purge}";
+                        writeLogEntry "FILE" "DEBUG" "${?}" "${cname}" "${LINENO}" "${function_name}" "is_root_entry -> ${is_root_entry}";
                     fi
 
                     if [[ -z "${entry_target}" ]]; then
