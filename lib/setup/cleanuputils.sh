@@ -258,7 +258,7 @@ function cleanupLocalFiles()
             [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
             [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
-            cmd_output="$(rm -irf --preserve-root "${eligible_file:?}")";
+            cmd_output="$(rm -rf --preserve-root "${eligible_file:?}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -293,7 +293,7 @@ function cleanupLocalFiles()
             [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
             [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
-            cmd_output="$(rm -if --preserve-root "${eligible_file:?}")";
+            cmd_output="$(rm -f --preserve-root "${eligible_file:?}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -494,13 +494,13 @@ function cleanupRemoteFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"-\" \"rm -irf --preserve-root\" \"${eligible_file:?}\" >| ${file_cleanup_file}";
                     fi
 
-                    { printf "%s %s %s\n" "-" "rm -irf --preserve-root" "${eligible_file:?}"; } >| "${file_cleanup_file}";
+                    { printf "%s %s %s\n" "-" "rm -rf --preserve-root" "${eligible_file:?}"; } >| "${file_cleanup_file}";
                 else
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"-\" \"rm -irf --preserve-root\" \"${eligible_file:?}\" >> ${file_cleanup_file}";
                     fi
 
-                    { printf "%s %s %s\n" "-" "rm -irf --preserve-root" "${eligible_file:?}"; } >> "${file_cleanup_file}";
+                    { printf "%s %s %s\n" "-" "rm -rf --preserve-root" "${eligible_file:?}"; } >> "${file_cleanup_file}";
                 fi
 
                 (( file_counter += 1 ));
@@ -555,7 +555,7 @@ function cleanupRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -f "${file_cleanup_file}" ]] && rm -i --preserve-root -f "${file_cleanup_file}";
+    [[ -f "${file_cleanup_file}" ]] && rm -f --preserve-root "${file_cleanup_file}";
 
     [[ -n "${file_counter}" ]] && builtin unset -v file_counter;
     [[ -n "${ret_code}" ]] && builtin unset -v ret_code;

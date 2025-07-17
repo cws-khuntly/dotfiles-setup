@@ -265,7 +265,7 @@ function transferLocalFiles()
 
                     [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
-                    cmd_output="$(cp -ipv "${source_file}" "${target_dir}/${target_file}")";
+                    cmd_output="$(cp -pv "${source_file}" "${target_dir}/${target_file}")";
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then

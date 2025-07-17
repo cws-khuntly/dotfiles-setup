@@ -288,7 +288,7 @@ function installLocalFiles()
                     fi
                 fi
 
-                rm -irf --preserve-root "${INSTALL_PATH:?}"/*;
+                rm -rf --preserve-root "${INSTALL_PATH:?}"/*;
             fi
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -484,7 +484,7 @@ function installLocalFiles()
                                 [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
                                 [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
-                                cmd_output="$(ln -is "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
+                                cmd_output="$(ln -s "$(eval printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
                                 ret_code="${?}";
 
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -559,7 +559,7 @@ function installLocalFiles()
                                 [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
                                 [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
-                                cmd_output="$(cp -ipv "$(val printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
+                                cmd_output="$(cp -pv "$(val printf "%s" "${entry_source}")" "$(eval printf "%s" "${entry_target}")")";
                                 ret_code="${?}";
 
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then

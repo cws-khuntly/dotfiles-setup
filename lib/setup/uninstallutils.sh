@@ -444,13 +444,13 @@ function uninstallRemoteFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"rm -irf --preserve-root\" \"${entry_target:?}\" >| ${sftp_send_file}";
                     fi
 
-                    { printf "%s %s %s\n" "rm -irf --preserve-root" "${entry_target:?}"; } >| "${sftp_send_file}";
+                    { printf "%s %s %s\n" "rm -rf --preserve-root" "${entry_target:?}"; } >| "${sftp_send_file}";
                 else
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: printf \"%s %s %s\n\" \"rm -irf --preserve-root\" \"${entry_target:?}\" >> ${sftp_send_file}";
                     fi
 
-                    { printf "%s %s %s\n" "rm -irf --preserve-root" "${entry_target:?}"; } >> "${sftp_send_file}";
+                    { printf "%s %s %s\n" "rm -rf --preserve-root" "${entry_target:?}"; } >> "${sftp_send_file}";
                 fi
 
                 [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
