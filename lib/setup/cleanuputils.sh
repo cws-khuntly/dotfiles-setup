@@ -78,9 +78,9 @@ function cleanupFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupLocalFiles ${cleanup_file_list}";
                     fi
 
-                    [[ -n "${cname}" ]] && builtin unset -vcname;
-                    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-                    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                    [[ -n "${cname}" ]] && builtin unset -v cname;
+                    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+                    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
                     cleanupLocalFiles "${cleanup_file_list}";
                     ret_code="${?}";
@@ -118,9 +118,9 @@ function cleanupFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupRemoteFiles ${cleanup_file_list} ${target_host} ${target_port} ${target_user}";
                     fi
 
-                    [[ -n "${cname}" ]] && builtin unset -vcname;
-                    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-                    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                    [[ -n "${cname}" ]] && builtin unset -v cname;
+                    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+                    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
                     cleanupRemoteFiles "${cleanup_file_list}" "${target_host}" "${target_port}" "${target_user}"
                     ret_code="${?}";
@@ -159,13 +159,13 @@ function cleanupFiles()
         if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
     fi
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${operating_mode}" ]] && builtin unset -voperating_mode;
-    [[ -n "${cleanup_file_list}" ]] && builtin unset -vforcleanup_file_listce_exec;
-    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
-    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${operating_mode}" ]] && builtin unset -v operating_mode;
+    [[ -n "${cleanup_file_list}" ]] && builtin unset -v forcleanup_file_listce_exec;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${target_user}" ]] && builtin unset -v target_user;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -175,11 +175,11 @@ function cleanupFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -255,8 +255,8 @@ function cleanupLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -rf ${eligible_file:?}";
             fi
 
-            [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             cmd_output="$(rm -irf --preserve-root "${eligible_file:?}")";
             ret_code="${?}";
@@ -290,8 +290,8 @@ function cleanupLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rm -f ${eligible_file:?}";
             fi
 
-            [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             cmd_output="$(rm -if --preserve-root "${eligible_file:?}")";
             ret_code="${?}";
@@ -325,8 +325,8 @@ function cleanupLocalFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: unlink ${eligible_file:?}";
             fi
 
-            [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             cmd_output="$(unlink "${eligible_file:?}")";
             ret_code="${?}";
@@ -357,21 +357,21 @@ function cleanupLocalFiles()
             fi
         fi
 
-        [[ -n "${eligibleFile}" ]] && builtin unset -veligibleFile;
-        [[ -n "${targetFile}" ]] && builtin unset -vtargetFile;
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+        [[ -n "${eligibleFile}" ]] && builtin unset -v eligibleFile;
+        [[ -n "${targetFile}" ]] && builtin unset -v targetFile;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
     done
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${requested_files}" ]] && builtin unset -vrequested_files;
-    [[ -n "${eligibleFile}" ]] && builtin unset -veligibleFile;
-    [[ -n "${targetFile}" ]] && builtin unset -vtargetFile;
-    [[ -n "${targetDir}" ]] && builtin unset -vtargetDir;
-    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
-    [[ -n "${files_to_process[*]}" ]] && builtin unset -vfiles_to_process;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${requested_files}" ]] && builtin unset -v requested_files;
+    [[ -n "${eligibleFile}" ]] && builtin unset -v eligibleFile;
+    [[ -n "${targetFile}" ]] && builtin unset -v targetFile;
+    [[ -n "${targetDir}" ]] && builtin unset -v targetDir;
+    [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
+    [[ -n "${files_to_process[*]}" ]] && builtin unset -v files_to_process;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -381,11 +381,11 @@ function cleanupLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -465,7 +465,7 @@ function cleanupRemoteFiles()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cat /dev/null >| ${file_cleanup_file}";
         fi
 
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
         cat /dev/null >| "${file_cleanup_file}";
         ret_code="${?}";
@@ -509,7 +509,7 @@ function cleanupRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "file_counter -> ${file_counter}";
                 fi
 
-                [[ -n "${eligible_file}" ]] && builtin unset -veligible_file;
+                [[ -n "${eligible_file}" ]] && builtin unset -v eligible_file;
             done
 
             if [[ ! -s "${file_cleanup_file}" ]]; then
@@ -524,9 +524,9 @@ function cleanupRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferFiles ${TRANSFER_LOCATION_REMOTE} ${file_cleanup_file} ${target_host} ${target_port} ${target_user} ${DEPLOY_TO_DIR}";
                 fi
 
-                [[ -n "${cname}" ]] && builtin unset -vcname;
-                [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                [[ -n "${cname}" ]] && builtin unset -v cname;
+                [[ -n "${function_name}" ]] && builtin unset -v function_name;
+                [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
                 transferFiles "${TRANSFER_LOCATION_REMOTE}" "${file_cleanup_file}" "${target_host}" "${target_port}" "${target_user}" "${DEPLOY_TO_DIR}";
                 ret_code="${?}";
@@ -557,15 +557,15 @@ function cleanupRemoteFiles()
 
     [[ -f "${file_cleanup_file}" ]] && rm -i --preserve-root -f "${file_cleanup_file}";
 
-    [[ -n "${file_counter}" ]] && builtin unset -vfile_counter;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${requested_files[*]}" ]] && builtin unset -vrequested_files;
-    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
-    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
-    [[ -n "${file_cleanup_file}" ]] && builtin unset -vfile_cleanup_file;
-    [[ -n "${eligible_file}" ]] && builtin unset -veligible_file;
+    [[ -n "${file_counter}" ]] && builtin unset -v file_counter;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${requested_files[*]}" ]] && builtin unset -v requested_files;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${target_user}" ]] && builtin unset -v target_user;
+    [[ -n "${file_cleanup_file}" ]] && builtin unset -v file_cleanup_file;
+    [[ -n "${eligible_file}" ]] && builtin unset -v eligible_file;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -575,11 +575,11 @@ function cleanupRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

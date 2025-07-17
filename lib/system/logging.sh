@@ -75,8 +75,8 @@ function usage()
     printf "    %s: %s\n" "Calling function" "The method within the script calling the method to write the log entry." >&2;
     printf "    %s: %s\n" "Message" "The data to write to the logfile." >&2;
 
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -112,10 +112,10 @@ function writeLogEntry()
             ;;
     esac
 
-    [[ -n "${action}" ]] && builtin unset -vaction;
+    [[ -n "${action}" ]] && builtin unset -v action;
 
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -145,11 +145,11 @@ function writeLogEntryToConsole()
         [Ss][Tt][Dd][Ee][Rr][Rr]) printf "\e[00;31m%s\e[00;32m\n" "${log_message}" >&2; ;;
     esac
 
-    [[ -n "${log_level}" ]] && builtin unset -vlog_level;
-    [[ -n "${log_message}" ]] && builtin unset -vlog_message;
+    [[ -n "${log_level}" ]] && builtin unset -v log_level;
+    [[ -n "${log_message}" ]] && builtin unset -v log_message;
 
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi
@@ -198,18 +198,18 @@ function writeLogEntryToFile()
 
     if [[ -n "${current_clobber}" ]] && [[ "${current_clobber}" == "off" ]]; then set +o noclobber; fi
 
-    [[ -n "${log_level}" ]] && builtin unset -vlog_level;
-    [[ -n "${log_pid}" ]] && builtin unset -vlog_pid;
-    [[ -n "${log_source}" ]] && builtin unset -vlog_source;
-    [[ -n "${log_line}" ]] && builtin unset -vlog_line;
-    [[ -n "${log_method}" ]] && builtin unset -vlog_method;
-    [[ -n "${log_message}" ]] && builtin unset -vlog_message;
-    [[ -n "${log_date}" ]] && builtin unset -vlog_date;
-    [[ -n "${log_file}" ]] && builtin unset -vlog_file;
-    [[ -n "${current_clobber}" ]] && builtin unset -vcurrent_clobber;
+    [[ -n "${log_level}" ]] && builtin unset -v log_level;
+    [[ -n "${log_pid}" ]] && builtin unset -v log_pid;
+    [[ -n "${log_source}" ]] && builtin unset -v log_source;
+    [[ -n "${log_line}" ]] && builtin unset -v log_line;
+    [[ -n "${log_method}" ]] && builtin unset -v log_method;
+    [[ -n "${log_message}" ]] && builtin unset -v log_message;
+    [[ -n "${log_date}" ]] && builtin unset -v log_date;
+    [[ -n "${log_file}" ]] && builtin unset -v log_file;
+    [[ -n "${current_clobber}" ]] && builtin unset -v current_clobber;
 
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set -x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set -v; fi

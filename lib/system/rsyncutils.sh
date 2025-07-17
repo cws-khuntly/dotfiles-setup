@@ -84,9 +84,9 @@ function frsync()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport:-_{SSH_TRANSPORT_TYPE}} ${target_host} ${target_port:-${SSH_PORT_NUMBER}}";
         fi
 
-        [[ -n "${cname}" ]] && builtin unset -vcname;
-        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+        [[ -n "${cname}" ]] && builtin unset -v cname;
+        [[ -n "${function_name}" ]] && builtin unset -v function_name;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
         returned_info="$(validateHostAvailability "${target_transport:-${SSH_TRANSPORT_TYPE}}" "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}")";
 
@@ -108,9 +108,9 @@ function frsync()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${target_host} ${target_port:-${SSH_PORT_NUMBER}} ${target_user} ${target_transport:-${SSH_TRANSPORT_TYPE}}";
             fi
 
-            [[ -n "${cname}" ]] && builtin unset -vcname;
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             copyKeysToTarget "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}" "${target_user}" "${target_transport:-${SSH_TRANSPORT_TYPE}}"
             ret_code="${?}";
@@ -129,8 +129,8 @@ function frsync()
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred copying SSH keys to host ${target_host} as ${target_user}. Please review logs.";
                 fi
             else
-                [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
-                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
+                [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
                 case "${transfer_type}" in
                     "${TRANSFER_LOCATION_LOCAL}")
@@ -173,16 +173,16 @@ function frsync()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${target_host}" ]] && builtin unset -vsshconfig;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_user}" ]] && builtin unset -vtarget_port;
-    [[ -n "${target_transport}" ]] && builtin unset -vtarget_user;
-    [[ -n "${transfer_type}" ]] && builtin unset -vtarget_transport;
-    [[ -n "${source_file}" ]] && builtin unset -vsource_file;
-    [[ -n "${target_file}" ]] && builtin unset -vtarget_file;
-    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${target_host}" ]] && builtin unset -v sshconfig;
+    [[ -n "${target_port}" ]] && builtin unset -v target_host;
+    [[ -n "${target_user}" ]] && builtin unset -v target_port;
+    [[ -n "${target_transport}" ]] && builtin unset -v target_user;
+    [[ -n "${transfer_type}" ]] && builtin unset -v target_transport;
+    [[ -n "${source_file}" ]] && builtin unset -v source_file;
+    [[ -n "${target_file}" ]] && builtin unset -v target_file;
+    [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -197,11 +197,11 @@ function frsync()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

@@ -87,9 +87,9 @@ function readPropertyFile()
 
         eval "${property_name}=\"${property_value}\"";
 
-        [[ -n "${property_name}" ]] && builtin unset -vproperty_name;
-        [[ -n "${property_value}" ]] && builtin unset -vproperty_value;
-        [[ -n "${entry}" ]] && builtin unset -ventry;
+        [[ -n "${property_name}" ]] && builtin unset -v property_name;
+        [[ -n "${property_value}" ]] && builtin unset -v property_value;
+        [[ -n "${entry}" ]] && builtin unset -v entry;
     done
 
     ## restore the original ifs
@@ -97,9 +97,9 @@ function readPropertyFile()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${property_name}" ]] && builtin unset -vproperty_name;
-    [[ -n "${property_value}" ]] && builtin unset -vproperty_value;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${property_name}" ]] && builtin unset -v property_name;
+    [[ -n "${property_value}" ]] && builtin unset -v property_value;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -114,11 +114,11 @@ function readPropertyFile()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -178,9 +178,9 @@ function validateAndCopyKeysForHost()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport} ${target_host} ${target_port}";
     fi
 
-    [[ -n "${cname}" ]] && builtin unset -vcname;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
     host_data="$(validateHostAvailability "${target_transport}" "${target_host}" "${target_port}")";
 
@@ -207,9 +207,9 @@ function validateAndCopyKeysForHost()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: getHostKeys ${returned_host} ${returned_port}";
         fi
 
-        [[ -n "${cname}" ]] && builtin unset -vcname;
-        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+        [[ -n "${cname}" ]] && builtin unset -v cname;
+        [[ -n "${function_name}" ]] && builtin unset -v function_name;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
         getHostKeys "${returned_host}" "${returned_port}";
         ret_code="${?}";
@@ -232,9 +232,9 @@ function validateAndCopyKeysForHost()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${returned_host} ${returned_port} ${target_user}";
             fi
 
-            [[ -n "${cname}" ]] && builtin unset -vcname;
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             copyKeysToTarget "${returned_host}" "${returned_port}" "${target_user}";
             ret_code="${?}";
@@ -258,14 +258,14 @@ function validateAndCopyKeysForHost()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
-    [[ -n "${target_transport}" ]] && builtin unset -vtarget_transport;
-    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
-    [[ -n "${returned_host}" ]] && builtin unset -vreturned_host;
-    [[ -n "${returned_port}" ]] && builtin unset -vreturned_port;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${target_transport}" ]] && builtin unset -v target_transport;
+    [[ -n "${target_user}" ]] && builtin unset -v target_user;
+    [[ -n "${returned_host}" ]] && builtin unset -v returned_host;
+    [[ -n "${returned_port}" ]] && builtin unset -v returned_port;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -280,11 +280,11 @@ function validateAndCopyKeysForHost()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -351,12 +351,12 @@ function waitForProcessFile()
 
     [[ -f "${watch_file}" ]] && rm -if --preserve-root "${watch_file}";
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${retry_counter}" ]] && builtin unset -vretry_counter;
-    [[ -n "${watch_file}" ]] && builtin unset -vwatch_file;
-    [[ -n "${sleep_time}" ]] && builtin unset -vsleep_time;
-    [[ -n "${retry_count}" ]] && builtin unset -vretry_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${retry_counter}" ]] && builtin unset -v retry_counter;
+    [[ -n "${watch_file}" ]] && builtin unset -v watch_file;
+    [[ -n "${sleep_time}" ]] && builtin unset -v sleep_time;
+    [[ -n "${retry_count}" ]] && builtin unset -v retry_count;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -371,11 +371,11 @@ function waitForProcessFile()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -419,7 +419,7 @@ function isNaN()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -434,11 +434,11 @@ function isNaN()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

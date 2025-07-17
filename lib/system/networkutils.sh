@@ -78,9 +78,9 @@ function validateHostAvailability()
 
         return_code=0;
     else
-        [[ -n "${cname}" ]] && builtin unset -vcname;
-        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+        [[ -n "${cname}" ]] && builtin unset -v cname;
+        [[ -n "${function_name}" ]] && builtin unset -v function_name;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
         validatedHostName="$(checkForValidHost "${target_host}")";
         validatedHostAddress="$(checkForValidAddress "${target_host}")";
@@ -106,9 +106,9 @@ function validateHostAvailability()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnValidatedHost -> ${returnValidatedHost}";
             fi
 
-            [[ -n "${cname}" ]] && builtin unset -vcname;
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             checkIfHostIsAlive "${target_transport}" "${returnValidatedHost}" "${validatedPortNumber}";
             ret_code="${?}";
@@ -142,14 +142,14 @@ function validateHostAvailability()
         fi
     fi
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
-    [[ -n "${target_transport}" ]] && builtin unset -vtarget_transport;
-    [[ -n "${validatedHostName}" ]] && builtin unset -vvalidatedHostName;
-    [[ -n "${validatedHostAddress}" ]] && builtin unset -vvalidatedHostAddress;
-    [[ -n "${validatedPortNumber}" ]] && builtin unset -vvalidatedPortNumber;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${target_transport}" ]] && builtin unset -v target_transport;
+    [[ -n "${validatedHostName}" ]] && builtin unset -v validatedHostName;
+    [[ -n "${validatedHostAddress}" ]] && builtin unset -v validatedHostAddress;
+    [[ -n "${validatedPortNumber}" ]] && builtin unset -v validatedPortNumber;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -164,11 +164,11 @@ function validateHostAvailability()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -237,7 +237,7 @@ function checkForValidHost()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: host ${checkForHostname} > /dev/null 2>&1";
             fi
 
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             host -N 0 "${checkForHostname}" > /dev/null 2>&1;
             ret_code="${?}";
@@ -311,7 +311,7 @@ function checkForValidHost()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: host ${checkForHostname}.${search_domain} > /dev/null 2>&1";
                     fi
 
-                    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
                     host -N 0 "${checkForHostname}.${search_domain}" > /dev/null 2>&1;
                     ret_code="${?}";
@@ -331,16 +331,16 @@ function checkForValidHost()
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "returnedHostName -> ${returnedHostName}";
                         fi
 
-                        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-                        [[ -n "${resolver_entry}" ]] && builtin unset -vresolver_entry;
+                        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+                        [[ -n "${resolver_entry}" ]] && builtin unset -v resolver_entry;
 
                         break;
                     fi
                 fi
 
-                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-                [[ -n "${search_domain}" ]] && builtin unset -vsearch_domain;
-                [[ -n "${resolver_entry}" ]] && builtin unset -vresolver_entry;
+                [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+                [[ -n "${search_domain}" ]] && builtin unset -v search_domain;
+                [[ -n "${resolver_entry}" ]] && builtin unset -v resolver_entry;
             done
 
             ## restore the original ifs;
@@ -350,13 +350,13 @@ function checkForValidHost()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${checkForHostname}" ]] && builtin unset -vcheckForHostname;
-    [[ -n "${isFQDN}" ]] && builtin unset -visFQDN;
-    [[ -n "${searchForNameInHosts}" ]] && builtin unset -vsearchForNameInHosts;
-    [[ -n "${resolver_entry}" ]] && builtin unset -vresolver_entry;
-    [[ -n "${search_domain}" ]] && builtin unset -vsearch_domain;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${checkForHostname}" ]] && builtin unset -v checkForHostname;
+    [[ -n "${isFQDN}" ]] && builtin unset -v isFQDN;
+    [[ -n "${searchForNameInHosts}" ]] && builtin unset -v searchForNameInHosts;
+    [[ -n "${resolver_entry}" ]] && builtin unset -v resolver_entry;
+    [[ -n "${search_domain}" ]] && builtin unset -v search_domain;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -371,11 +371,11 @@ function checkForValidHost()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -434,7 +434,7 @@ function checkForValidAddress()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: grep -qE \"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$\" <<< ${checkForAddress}";
         fi
 
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
         # TODO: add isNaN here?
         grep -qE "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$" <<< "${checkForAddress}";
@@ -471,7 +471,7 @@ function checkForValidAddress()
                     fi
                 fi
 
-                [[ -n "${entry}" ]] && builtin unset -ventry;
+                [[ -n "${entry}" ]] && builtin unset -v entry;
             done
 
             if [[ -z "${counter}" ]] || (( counter == 0 )); then returnedHostAddress="${checkForAddress}"; else return_code=1; fi
@@ -486,12 +486,12 @@ function checkForValidAddress()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${counter}" ]] && builtin unset -vcounter;
-    [[ -n "${checkForAddress}" ]] && builtin unset -vcheckForAddress;
-    [[ -n "${split_up[*]}" ]] && builtin unset -vsplit_up;
-    [[ -n "${entry}" ]] && builtin unset -ventry;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${counter}" ]] && builtin unset -v counter;
+    [[ -n "${checkForAddress}" ]] && builtin unset -v checkForAddress;
+    [[ -n "${split_up[*]}" ]] && builtin unset -v split_up;
+    [[ -n "${entry}" ]] && builtin unset -v entry;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -506,11 +506,11 @@ function checkForValidAddress()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -566,7 +566,7 @@ function checkForValidPort()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: grep -qE \"^[0-9]{1,5}$\" <<< ${checkPortNumber}";
         fi
 
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
         # TODO: add isNaN here?
         grep -qE "^[0-9]{1,5}$" <<< "${checkPortNumber}";
@@ -605,9 +605,9 @@ function checkForValidPort()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${checkPortNumber}" ]] && builtin unset -vcheckPortNumber;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${checkPortNumber}" ]] && builtin unset -v checkPortNumber;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -622,11 +622,11 @@ function checkForValidPort()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -685,7 +685,7 @@ function checkIfHostIsAlive()
 
     if [[ -n "${checkNetworkType}" ]] && [[ -n "${checkNetworkName}" ]] && [[ -n "${checkNetworkPort}" ]]; then
         if [[ -n "$(shopt -u expand_aliases; command -v nc; shopt -s expand_aliases)" ]]; then
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             case "${checkNetworkType}" in
                 "[Tt][Cc][Pp]")
@@ -722,8 +722,8 @@ function checkIfHostIsAlive()
                 fi
             fi
         elif [[ -n "$(shopt -u expand_aliases; command -v nmap; shopt -s expand_aliases)" ]]; then
-            [[ -n "${isHostAvailable}" ]] && builtin unset -visHostAvailable;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${isHostAvailable}" ]] && builtin unset -v isHostAvailable;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             case "${checkNetworkType}" in
                 "[Tt][Cc][Pp]")
@@ -802,11 +802,11 @@ function checkIfHostIsAlive()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${checkNetworkName}" ]] && builtin unset -vcheckNetworkName;
-    [[ -n "${checkNetworkPort}" ]] && builtin unset -vcheckNetworkPort;
-    [[ -n "${isHostAvailable}" ]] && builtin unset -visHostAvailable;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${checkNetworkName}" ]] && builtin unset -v checkNetworkName;
+    [[ -n "${checkNetworkPort}" ]] && builtin unset -v checkNetworkPort;
+    [[ -n "${isHostAvailable}" ]] && builtin unset -v isHostAvailable;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -821,11 +821,11 @@ function checkIfHostIsAlive()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

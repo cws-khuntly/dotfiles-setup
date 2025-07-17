@@ -74,8 +74,8 @@ function runWatchdog()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: watchForProcessID ${watch_pid} ${wait_time} ${retry_count}";
             fi
 
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${cname}" ]] && builtin unset -vcname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
 
             watchForProcessID "${watch_pid}" "${wait_time}" "${retry_count}";
             ret_code="${?}";
@@ -107,8 +107,8 @@ function runWatchdog()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: watchForFile ${watch_file} ${wait_time} ${retry_count}";
             fi
 
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${cname}" ]] && builtin unset -vcname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
 
             watchForFile "${watch_file}" "${wait_time}" "${retry_count}";
             ret_code="${?}";
@@ -142,8 +142,8 @@ function runWatchdog()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: watchForNetworkPort ${watch_type} ${watch_host} ${watch_port} ${wait_time} ${retry_count}";
             fi
 
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${cname}" ]] && builtin unset -vcname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
 
             watchForNetworkPort "${watch_type}" "${watch_host}" "${watch_port}" "${wait_time}" "${retry_count}";
             ret_code="${?}";
@@ -164,11 +164,11 @@ function runWatchdog()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${process_id}" ]] && builtin unset -vprocess_id;
-    [[ -n "${process_time_wait}" ]] && builtin unset -vprocess_time_wait;
-    [[ -n "${process_end_count}" ]] && builtin unset -vprocess_end_count;
-    [[ -n "${pid_runtime}" ]] && builtin unset -vpid_runtime;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${process_id}" ]] && builtin unset -v process_id;
+    [[ -n "${process_time_wait}" ]] && builtin unset -v process_time_wait;
+    [[ -n "${process_end_count}" ]] && builtin unset -v process_end_count;
+    [[ -n "${pid_runtime}" ]] && builtin unset -v pid_runtime;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -183,11 +183,11 @@ function runWatchdog()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -285,11 +285,11 @@ function watchForProcessID()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-	[[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${process_id}" ]] && builtin unset -vprocess_id;
-    [[ -n "${process_time_wait}" ]] && builtin unset -vprocess_time_wait;
-	[[ -n "${process_end_count}" ]] && builtin unset -vprocess_end_count;
-    [[ -n "${pid_runtime}" ]] && builtin unset -vpid_runtime;
+	[[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${process_id}" ]] && builtin unset -v process_id;
+    [[ -n "${process_time_wait}" ]] && builtin unset -v process_time_wait;
+	[[ -n "${process_end_count}" ]] && builtin unset -v process_end_count;
+    [[ -n "${pid_runtime}" ]] && builtin unset -v pid_runtime;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -304,11 +304,11 @@ function watchForProcessID()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -378,12 +378,12 @@ function watchForFile()
 
     [[ -f "${watch_file}" ]] && rm -if --preserve-root "${watch_file}";
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${retry_counter}" ]] && builtin unset -vretry_counter;
-    [[ -n "${watch_file}" ]] && builtin unset -vwatch_file;
-    [[ -n "${sleep_time}" ]] && builtin unset -vsleep_time;
-    [[ -n "${retry_count}" ]] && builtin unset -vretry_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${retry_counter}" ]] && builtin unset -v retry_counter;
+    [[ -n "${watch_file}" ]] && builtin unset -v watch_file;
+    [[ -n "${sleep_time}" ]] && builtin unset -v sleep_time;
+    [[ -n "${retry_count}" ]] && builtin unset -v retry_count;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -398,11 +398,11 @@ function watchForFile()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -466,9 +466,9 @@ function watchForNetworkPort()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport} ${target_host} ${target_port}";
         fi
 
-        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-        [[ -n "${cname}" ]] && builtin unset -vcname;
+        [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+        [[ -n "${function_name}" ]] && builtin unset -v function_name;
+        [[ -n "${cname}" ]] && builtin unset -v cname;
 
         validateHostAvailability "${target_transport}" "${target_host}" "${target_port}"
         ret_code="${?}";
@@ -488,13 +488,13 @@ function watchForNetworkPort()
 
     (( retry_counter >= retry_count )) && return_code=1;
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${retry_counter}" ]] && builtin unset -vretry_counter;
-    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
-    [[ -n "${sleep_time}" ]] && builtin unset -vsleep_time;
-    [[ -n "${retry_count}" ]] && builtin unset -vretry_count;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${retry_counter}" ]] && builtin unset -v retry_counter;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${sleep_time}" ]] && builtin unset -v sleep_time;
+    [[ -n "${retry_count}" ]] && builtin unset -v retry_count;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -509,11 +509,11 @@ function watchForNetworkPort()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

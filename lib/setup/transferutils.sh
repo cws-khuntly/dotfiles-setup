@@ -72,9 +72,9 @@ function transferFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferLocalFiles ${files_to_process}";
             fi
 
-            [[ -n "${cname}" ]] && builtin unset -vcname;
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             transferLocalFiles "${files_to_process}";
             ret_code="${?}";
@@ -114,9 +114,9 @@ function transferFiles()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: transferRemoteFiles ${files_to_process} ${target_host} ${target_port} ${target_user} ${target_dir}";
             fi
 
-            [[ -n "${cname}" ]] && builtin unset -vcname;
-            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+            [[ -n "${cname}" ]] && builtin unset -v cname;
+            [[ -n "${function_name}" ]] && builtin unset -v function_name;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
             transferRemoteFiles "${files_to_process}" "${target_host}" "${target_port}" "${target_user}" "${target_dir}";
             ret_code="${?}";
@@ -151,13 +151,13 @@ function transferFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${operating_mode}" ]] && builtin unset -voperating_mode;
-    [[ -n "${files_to_process}" ]] && builtin unset -vfiles_to_process;
-    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
-    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${operating_mode}" ]] && builtin unset -v operating_mode;
+    [[ -n "${files_to_process}" ]] && builtin unset -v files_to_process;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${target_user}" ]] && builtin unset -v target_user;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_PERFORMANCE}" ]] && [[ "${ENABLE_PERFORMANCE}" == "${_TRUE}" ]]; then
         end_epoch="$(date +"%s")"
@@ -167,11 +167,11 @@ function transferFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -263,7 +263,7 @@ function transferLocalFiles()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cp -ipv ${source_file} ${target_dir}/${target_file}";
                     fi
 
-                    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
                     cmd_output="$(cp -ipv "${source_file}" "${target_dir}/${target_file}")";
                     ret_code="${?}";
@@ -290,23 +290,23 @@ function transferLocalFiles()
 
                 (( file_counter += 1 ));
 
-                [[ -n "${target_dir}" ]] && builtin unset -vtarget_dir;
-                [[ -n "${target_file}" ]] && builtin unset -vtarget_file;
-                [[ -n "${source_file}" ]] && builtin unset -vsource_file;
-                [[ -n "${eligible_file}" ]] && builtin unset -veligible_file;
+                [[ -n "${target_dir}" ]] && builtin unset -v target_dir;
+                [[ -n "${target_file}" ]] && builtin unset -v target_file;
+                [[ -n "${source_file}" ]] && builtin unset -v source_file;
+                [[ -n "${eligible_file}" ]] && builtin unset -v eligible_file;
             fi
         done
     fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${file_listing}" ]] && builtin unset -vfile_listing;
-    [[ -n "${files_to_process[*]}" ]] && builtin unset -vfiles_to_process;
-    [[ -n "${eligibleFile}" ]] && builtin unset -veligibleFile;
-    [[ -n "${target_file}" ]] && builtin unset -vtarget_file;
-    [[ -n "${target_dir}" ]] && builtin unset -vtarget_dir;
-    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${file_listing}" ]] && builtin unset -v file_listing;
+    [[ -n "${files_to_process[*]}" ]] && builtin unset -v files_to_process;
+    [[ -n "${eligibleFile}" ]] && builtin unset -v eligibleFile;
+    [[ -n "${target_file}" ]] && builtin unset -v target_file;
+    [[ -n "${target_dir}" ]] && builtin unset -v target_dir;
+    [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -321,11 +321,11 @@ function transferLocalFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -458,7 +458,7 @@ function transferRemoteFiles()
 
                 (( file_counter += 1 ));
 
-                [[ -n "${eligible_file}" ]] && builtin unset -veligible_file;
+                [[ -n "${eligible_file}" ]] && builtin unset -v eligible_file;
             done
 
             if [[ ! -s "${sftp_send_file}" ]] || (( file_counter != ${#files_to_process[*]} )); then
@@ -473,9 +473,9 @@ function transferRemoteFiles()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: send-file --files-from=${sftp_send_file} ${target_user}@${target_host}:${target_dir}";
                 fi
 
-                [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-                [[ -n "${cname}" ]] && builtin unset -vcname;
-                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                [[ -n "${function_name}" ]] && builtin unset -v function_name;
+                [[ -n "${cname}" ]] && builtin unset -v cname;
+                [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
                 cmd_output="$(send-file "--files-from=${sftp_send_file}" "${target_user}@${target_host}:${target_dir}")";
                 ret_code="${?}";
@@ -500,7 +500,7 @@ function transferRemoteFiles()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${cleanup_file_list}" ]] && builtin unset -vcleanup_file_list;
+    [[ -n "${cleanup_file_list}" ]] && builtin unset -v cleanup_file_list;
 
     cleanup_file_list="${sftp_send_file}"
 
@@ -509,9 +509,9 @@ function transferRemoteFiles()
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: cleanupFiles ${CLEANUP_LOCATION_LOCAL} ${cleanup_file_list}";
     fi
 
-    [[ -n "${cname}" ]] && builtin unset -vcname;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
     cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "${cleanup_file_list}";
     ret_code="${?}";
@@ -535,20 +535,20 @@ function transferRemoteFiles()
         fi
     fi
 
-    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
-    [[ -n "${error_count}" ]] && builtin unset -verror_count;
-    [[ -n "${file_list}" ]] && builtin unset -vfile_list;
-    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
-    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
-    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
-    [[ -n "${sftp_send_file}" ]] && builtin unset -vsftp_send_file;
-    [[ -n "${files_to_process[*]}" ]] && builtin unset -vfiles_to_process;
-    [[ -n "${eligibleFile}" ]] && builtin unset -veligibleFile;
-    [[ -n "${target_file}" ]] && builtin unset -vtarget_file;
-    [[ -n "${target_dir}" ]] && builtin unset -vtarget_dir;
-    [[ -n "${file_counter}" ]] && builtin unset -vfile_counter;
-    [[ -n "${cleanup_file_list}" ]] && builtin unset -vcleanup_file_list;
-    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+    [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
+    [[ -n "${error_count}" ]] && builtin unset -v error_count;
+    [[ -n "${file_list}" ]] && builtin unset -v file_list;
+    [[ -n "${target_host}" ]] && builtin unset -v target_host;
+    [[ -n "${target_port}" ]] && builtin unset -v target_port;
+    [[ -n "${target_user}" ]] && builtin unset -v target_user;
+    [[ -n "${sftp_send_file}" ]] && builtin unset -v sftp_send_file;
+    [[ -n "${files_to_process[*]}" ]] && builtin unset -v files_to_process;
+    [[ -n "${eligibleFile}" ]] && builtin unset -v eligibleFile;
+    [[ -n "${target_file}" ]] && builtin unset -v target_file;
+    [[ -n "${target_dir}" ]] && builtin unset -v target_dir;
+    [[ -n "${file_counter}" ]] && builtin unset -v file_counter;
+    [[ -n "${cleanup_file_list}" ]] && builtin unset -v cleanup_file_list;
+    [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -563,11 +563,11 @@ function transferRemoteFiles()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
-    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
-    [[ -n "${runtime}" ]] && builtin unset -vruntime;
-    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
-    [[ -n "${cname}" ]] && builtin unset -vcname;
+    [[ -n "${start_epoch}" ]] && builtin unset -v start_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -v end_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -v runtime;
+    [[ -n "${function_name}" ]] && builtin unset -v function_name;
+    [[ -n "${cname}" ]] && builtin unset -v cname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
