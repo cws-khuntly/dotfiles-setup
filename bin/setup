@@ -1102,13 +1102,13 @@ else
             fi
 
             # shellcheck source=/dev/null
-            source "${BUILD_PATH}/lib/setup/pre-install.sh";
+            source "${SOURCE_BUILD_PATH}/lib/setup/pre-install.sh";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: customizeBuild";
+                writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: pre-install";
             fi
 
-            pre-install;
+            [[ $(type -t "pre-install" ) == "function" ]] && pre-install;
             RET_CODE="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -1209,13 +1209,13 @@ else
                         fi
 
                         # shellcheck source=/dev/null
-                        source "${BUILD_PATH}/lib/setup/post-install.sh";
+                        source "${SOURCE_BUILD_PATH}/lib/setup/post-install.sh";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: customizeBuild";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: post-install";
                         fi
 
-                        post-install;
+                        [[ $(type -t "post-install" ) == "function" ]] && post-install;
                         RET_CODE="${?}";
 
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
