@@ -480,7 +480,7 @@ function installLocalFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln -is eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
                             fi
 
-                            if [[ -L "$(eval printf "%s" "${entry_source}")" ]] && [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]]; then cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_source}")"; fi
+                            if [[ -L "$(eval printf "%s" "${entry_source}")" ]] || [[ -f "$(eval printf "%s" "${entry_source}")" ]] && [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]]; then cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_source}")"; fi
 
                             if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]] && [[ ! -L "$(eval printf "%s" "${entry_source}")" ]]; then
                                 [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
