@@ -84,9 +84,9 @@ function frsync()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport:-_{SSH_TRANSPORT_TYPE}} ${target_host} ${target_port:-${SSH_PORT_NUMBER}}";
         fi
 
-        [[ -n "${cname}" ]] && unset cname;
-        [[ -n "${function_name}" ]] && unset function_name;
-        [[ -n "${ret_code}" ]] && unset ret_code;
+        [[ -n "${cname}" ]] && builtin unset -vcname;
+        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
         returned_info="$(validateHostAvailability "${target_transport:-${SSH_TRANSPORT_TYPE}}" "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}")";
 
@@ -108,9 +108,9 @@ function frsync()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${target_host} ${target_port:-${SSH_PORT_NUMBER}} ${target_user} ${target_transport:-${SSH_TRANSPORT_TYPE}}";
             fi
 
-            [[ -n "${cname}" ]] && unset cname;
-            [[ -n "${function_name}" ]] && unset function_name;
-            [[ -n "${ret_code}" ]] && unset ret_code;
+            [[ -n "${cname}" ]] && builtin unset -vcname;
+            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
             copyKeysToTarget "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}" "${target_user}" "${target_transport:-${SSH_TRANSPORT_TYPE}}"
             ret_code="${?}";
@@ -129,8 +129,8 @@ function frsync()
                     writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "An error occurred copying SSH keys to host ${target_host} as ${target_user}. Please review logs.";
                 fi
             else
-                [[ -n "${cmd_output}" ]] && unset cmd_output;
-                [[ -n "${ret_code}" ]] && unset ret_code;
+                [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
                 case "${transfer_type}" in
                     "${TRANSFER_LOCATION_LOCAL}")
@@ -138,14 +138,18 @@ function frsync()
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rsync ${target_user}@${target_host}:${source_file} ${target_file}";
                         fi
 
-                        cmd_output="$(rsync "${target_user}@${target_host}:${source_file}" "${target_file}")";
+                        cmd_output="$(rsync -avz --append --safe-links --delete --delete-excluded --exclude-from="${SETUP_ROOT}/config/excludes" --timeout "${REQUEST_TIMEOUT:-30}" --temp-dir="${WORK_DIR}" \
+                            --no-motd --blocking-io --stats --progress -e "ssh -qTl \"${target_user}\" -oPort=\"${target_port:-${SSH_PORT_NUMBER}}\" -E \"${LOG_ROOT}/ssh.log\"" --log-file="${LOG_ROOT}/rsync.log" \
+                            "${target_user}@${target_host}:${source_file}" "${target_file}")";
                         ;;
                     "${TRANSFER_LOCATION_REMOTE}")
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: rsync ${source_file} ${target_user}@${target_host}:${target_file}";
                         fi
 
-                        cmd_output="$(rsync "${source_file}" "${target_user}@${target_host}:${target_file}")";
+                        cmd_output="$(rsync -avz --append --safe-links --delete --delete-excluded --exclude-from="${SETUP_ROOT}/config/excludes" --timeout "${REQUEST_TIMEOUT:-30}" --temp-dir="${WORK_DIR}" \
+                            --no-motd --blocking-io --stats --progress -e "ssh -qTl \"${target_user}\" -oPort=\"${target_port:-${SSH_PORT_NUMBER}}\" -E \"${LOG_ROOT}/ssh.log\"" --log-file="${LOG_ROOT}/rsync.log" \
+                            "${source_file}" "${target_user}@${target_host}:${target_file}")";
                         ;;
                 esac
 
@@ -169,16 +173,16 @@ function frsync()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && unset error_count;
-    [[ -n "${ret_code}" ]] && unset ret_code;
-    [[ -n "${target_host}" ]] && unset sshconfig;
-    [[ -n "${target_port}" ]] && unset target_host;
-    [[ -n "${target_user}" ]] && unset target_port;
-    [[ -n "${target_transport}" ]] && unset target_user;
-    [[ -n "${transfer_type}" ]] && unset target_transport;
-    [[ -n "${source_file}" ]] && unset source_file;
-    [[ -n "${target_file}" ]] && unset target_file;
-    [[ -n "${cmd_output}" ]] && unset cmd_output;
+    [[ -n "${error_count}" ]] && builtin unset -verror_count;
+    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+    [[ -n "${target_host}" ]] && builtin unset -vsshconfig;
+    [[ -n "${target_port}" ]] && builtin unset -vtarget_host;
+    [[ -n "${target_user}" ]] && builtin unset -vtarget_port;
+    [[ -n "${target_transport}" ]] && builtin unset -vtarget_user;
+    [[ -n "${transfer_type}" ]] && builtin unset -vtarget_transport;
+    [[ -n "${source_file}" ]] && builtin unset -vsource_file;
+    [[ -n "${target_file}" ]] && builtin unset -vtarget_file;
+    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -193,11 +197,11 @@ function frsync()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset start_epoch;
-    [[ -n "${end_epoch}" ]] && unset end_epoch;
-    [[ -n "${runtime}" ]] && unset runtime;
-    [[ -n "${function_name}" ]] && unset function_name;
-    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -vruntime;
+    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+    [[ -n "${cname}" ]] && builtin unset -vcname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi

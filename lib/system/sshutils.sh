@@ -80,10 +80,10 @@ function getHostKeys()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-keygen -F ${target_host} 2>/dev/null | grep ${keytype}";
             fi
 
-            [[ -n "${does_key_exist}" ]] && unset does_key_exist;
-            [[ -n "${ret_code}" ]] && unset ret_code;
+            [[ -n "${does_key_exist}" ]] && builtin unset -vdoes_key_exist;
+            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
-            does_key_exist="$(ssh-keygen "${target_host}" 2>/dev/null | grep "${keytype}")";
+            does_key_exist="$(ssh-keygen -C "" -N "" "${target_host}" 2>/dev/null | grep "${keytype}")";
             ret_code="${?}";
 
             if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -100,9 +100,9 @@ function getHostKeys()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport:-${SSH_TRANSPORT_TYPE}} ${target_host} ${target_port:-${SSH_PORT_NUMBER}}";
             fi
 
-            [[ -n "${cname}" ]] && unset cname;
-            [[ -n "${function_name}" ]] && unset function_name;
-            [[ -n "${ret_code}" ]] && unset  ret_nncode;
+            [[ -n "${cname}" ]] && builtin unset -vcname;
+            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+            [[ -n "${ret_code}" ]] && builtin unset -v ret_nncode;
 
             returned_info="$(validateHostAvailability "${target_transport:-${SSH_TRANSPORT_TYPE}}" "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}")";
             ret_code="${?}";
@@ -126,18 +126,18 @@ function getHostKeys()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-keyscan -t ${keytype} -p ${target_port} -H ${target_host}";
                 fi
 
-                [[ -n "${remote_ssh_version}" ]] && unset remote_ssh_version;
-                [[ -n "${remote_ssh_key}" ]] && unset remote_ssh_key;
-                [[ -n "${ret_code}" ]] && unset ret_code;
+                [[ -n "${remote_ssh_version}" ]] && builtin unset -vremote_ssh_version;
+                [[ -n "${remote_ssh_key}" ]] && builtin unset -vremote_ssh_key;
+                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
-                remote_ssh_version="$(printf "%s" "~" | nc "${target_host}" "${target_port}" 2>/dev/null | head -1 | tr -d $'\r')";
-                remote_ssh_key="$(ssh-keyscan -t "${keytype}" -p "${target_port:-${SSH_PORT_NUMBER}}" "${target_host}")";
+                remote_ssh_version="$(printf "%s" "~" | nc -zw "${REQUEST_TIMEOUT:-10}" "${target_host}" "${target_port}" 2>/dev/null | head -1 | tr -d $'\r')";
+                remote_ssh_key="$(ssh-keyscan -T "${REQUEST_TIMEOUT:-30}" -F -t "${keytype}" -p "${target_port:-${SSH_PORT_NUMBER}}" "${target_host}")";
                     ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "remote_ssh_version -> ${remote_ssh_version}";
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "remote_ssh_key -> ${remote_ssh_key}";
-                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "nc/${target_host},${target_port} -> ret_code -> ${ret_code}";
+                    writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "nc / ${target_host},${target_port} -> ret_code -> ${ret_code}";
                 fi
 
                 if [[ -z "${ret_code}" ]] || (( ret_code != 0 )) && [[ -z "${remote_ssh_key}" ]] || [[ -z "${remote_ssh_version}" ]]; then
@@ -157,9 +157,9 @@ function getHostKeys()
                     printf "%s\n" "${remote_ssh_key}" >> "${known_hosts_file}";
                 fi
 
-                [[ -n "${keytype}" ]] && unset keytype;
-                [[ -n "${does_key_exist}" ]] && unset does_key_exist;
-                [[ -n "${remote_ssh_key}" ]] && unset remote_ssh_key;
+                [[ -n "${keytype}" ]] && builtin unset -vkeytype;
+                [[ -n "${does_key_exist}" ]] && builtin unset -vdoes_key_exist;
+                [[ -n "${remote_ssh_key}" ]] && builtin unset -vremote_ssh_key;
         fi
 
         done
@@ -169,15 +169,15 @@ function getHostKeys()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && unset error_count;
-    [[ -n "${does_key_exist}" ]] && unset does_key_exist;
-    [[ -n "${ret_code}" ]] && unset ret_code;
-    [[ -n "${remote_ssh_version}" ]] && unset remote_ssh_version;
-    [[ -n "${remote_ssh_key}" ]] && unset remote_ssh_key;
-    [[ -n "${target_host}" ]] && unset target_host;
-    [[ -n "${target_port}" ]] && unset target_port;
-    [[ -n "${target_transport}" ]] && unset target_transport;
-    [[ -n "${known_hosts_file}" ]] && unset known_hosts_file;
+    [[ -n "${error_count}" ]] && builtin unset -verror_count;
+    [[ -n "${does_key_exist}" ]] && builtin unset -vdoes_key_exist;
+    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+    [[ -n "${remote_ssh_version}" ]] && builtin unset -vremote_ssh_version;
+    [[ -n "${remote_ssh_key}" ]] && builtin unset -vremote_ssh_key;
+    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
+    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
+    [[ -n "${target_transport}" ]] && builtin unset -vtarget_transport;
+    [[ -n "${known_hosts_file}" ]] && builtin unset -vknown_hosts_file;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -192,11 +192,11 @@ function getHostKeys()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset start_epoch;
-    [[ -n "${end_epoch}" ]] && unset end_epoch;
-    [[ -n "${runtime}" ]] && unset runtime;
-    [[ -n "${function_name}" ]] && unset function_name;
-    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -vruntime;
+    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+    [[ -n "${cname}" ]] && builtin unset -vcname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -252,12 +252,12 @@ function generateSshKeys()
     if [[ ! -d "${target_ssh_dir}" ]]; then
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "SSH user configuration directory does not exist. Creating.";
-            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir ${target_ssh_dir}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mkdir -pv ${target_ssh_dir}";
         fi
 
-        [[ -n "${ret_code}" ]] && unset ret_code;
+        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
-        cmd_output="$(mkdir "${target_ssh_dir}")";
+        cmd_output="$(mkdir -pv "${target_ssh_dir}")";
         ret_code="${?}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -300,7 +300,7 @@ function generateSshKeys()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ${SSH_KEYGEN_PROGRAM} -b ${ssh_key_size} -t ${ssh_key_type} -f ${WORK_DIR}/${ssh_key_filename}";
                 fi
 
-                [[ -n "${ret_code}" ]] && unset ret_code;
+                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
                 [[ "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$(ssh-keygen -b "${ssh_key_size}" -f "${WORK_DIR}/${ssh_key_filename}" -t "${ssh_key_type}")";
                 [[ ! "${ssh_key_type}" =~ [Rr][Ss][Aa] ]] && cmd_output="$(ssh-keygen -f "${WORK_DIR}/${ssh_key_filename}" -t "${ssh_key_type}")";
@@ -326,13 +326,13 @@ function generateSshKeys()
                         fi
                     else
                         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${WORK_DIR}/${ssh_key_filename} ${target_ssh_dir}/${ssh_key_filename}";
-                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv ${WORK_DIR}/${ssh_key_filename}.pub ${target_ssh_dir}/${ssh_key_filename}.pub";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv -i ${WORK_DIR}/${ssh_key_filename} ${target_ssh_dir}/${ssh_key_filename}";
+                            writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: mv -i ${WORK_DIR}/${ssh_key_filename}.pub ${target_ssh_dir}/${ssh_key_filename}.pub";
                         fi
 
                         ## relocate the keyfiles to the user home directory;
-                        mv "${WORK_DIR}/${ssh_key_filename}" "${target_ssh_dir}/${ssh_key_filename}";
-                        mv "${WORK_DIR}/${ssh_key_filename}.pub" "${target_ssh_dir}/${ssh_key_filename}.pub";
+                        mv -i "${WORK_DIR}/${ssh_key_filename}" "${target_ssh_dir}/${ssh_key_filename}";
+                        mv -i "${WORK_DIR}/${ssh_key_filename}.pub" "${target_ssh_dir}/${ssh_key_filename}.pub";
 
                         ## make sure they exist;
                         if [[ ! -f "${target_ssh_dir}/${ssh_key_filename}" ]] || [[ ! -f "${target_ssh_dir}/${ssh_key_filename}.pub" ]]; then
@@ -346,22 +346,22 @@ function generateSshKeys()
                 fi
             fi
 
-            [[ -n "${cmd_output}" ]] && unset cmd_output;
-            [[ -n "${ssh_key_type}" ]] && unset ssh_key_type;
-            [[ -n "${ssh_key_size}" ]] && unset ssh_key_size;
-            [[ -n "${ssh_key_filename}" ]] && unset ssh_key_filename;
-            [[ -n "${ret_code}" ]] && unset ret_code;
+            [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+            [[ -n "${ssh_key_type}" ]] && builtin unset -vssh_key_type;
+            [[ -n "${ssh_key_size}" ]] && builtin unset -vssh_key_size;
+            [[ -n "${ssh_key_filename}" ]] && builtin unset -vssh_key_filename;
+            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
         done
     fi
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${cmd_output}" ]] && unset cmd_output;
-    [[ -n "${ssh_key_type}" ]] && unset ssh_key_type;
-    [[ -n "${ssh_key_size}" ]] && unset ssh_key_size;
-    [[ -n "${ssh_key_filename}" ]] && unset ssh_key_filename;
-    [[ -n "${available_ssh_key_type}" ]] && unset available_ssh_key_type;
-    [[ -n "${ret_code}" ]] && unset ret_code;
+    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+    [[ -n "${ssh_key_type}" ]] && builtin unset -vssh_key_type;
+    [[ -n "${ssh_key_size}" ]] && builtin unset -vssh_key_size;
+    [[ -n "${ssh_key_filename}" ]] && builtin unset -vssh_key_filename;
+    [[ -n "${available_ssh_key_type}" ]] && builtin unset -vavailable_ssh_key_type;
+    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
     if [[ -n "${error_count}" ]] && (( error_count != 0 )) && (( error_count >= ${#SSH_KEY_TYPES[@]} )); then return_code="${error_count}"; fi
 
@@ -378,11 +378,11 @@ function generateSshKeys()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset start_epoch;
-    [[ -n "${end_epoch}" ]] && unset end_epoch;
-    [[ -n "${runtime}" ]] && unset runtime;
-    [[ -n "${function_name}" ]] && unset function_name;
-    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -vruntime;
+    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+    [[ -n "${cname}" ]] && builtin unset -vcname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -448,9 +448,9 @@ function copyKeysToTarget()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport:-${SSH_TRANSPORT_TYPE}} ${target_host} ${target_port:-${SSH_PORT_NUMBER}}";
         fi
 
-        [[ -n "${cname}" ]] && unset cname;
-        [[ -n "${function_name}" ]] && unset function_name;
-        [[ -n "${ret_code}" ]] && unset ret_code;
+        [[ -n "${cname}" ]] && builtin unset -vcname;
+        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
         returned_info="$(validateHostAvailability "${target_transport:-${SSH_TRANSPORT_TYPE}}" "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}")";
 
@@ -491,10 +491,10 @@ function copyKeysToTarget()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh-copy-id -i ${keyfile} -oPort=${target_port:-${SSH_PORT_NUMBER}} ${target_user}@${target_host}";
                     fi
 
-                    [[ -n "${cmd_output}" ]] && unset cmd_output;
-                    [[ -n "${ret_code}" ]] && unset ret_code;
+                    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+                    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
-                    cmd_output="$(echo "${sshpass}" | ssh-copy-id "${keyfile}" -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
+                    cmd_output="$(echo "${sshpass}" | ssh-copy-id -f -i "${keyfile}" -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_user}@${target_host}")";
                     ret_code="${?}";
 
                     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -519,8 +519,8 @@ function copyKeysToTarget()
                     fi
                 fi
 
-                [[ -n "${ret_code}" ]] && unset ret_code;
-                [[ -n "${keyfile}" ]] && unset keyfile;
+                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+                [[ -n "${keyfile}" ]] && builtin unset -vkeyfile;
             done
         fi
     else
@@ -533,14 +533,14 @@ function copyKeysToTarget()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${ret_code}" ]] && unset ret_code;
-    [[ -n "${continue_exec}" ]] && unset continue_exec;
-    [[ -n "${target_host}" ]] && unset target_host;
-    [[ -n "${target_port}" ]] && unset target_port;
-    [[ -n "${target_user}" ]] && unset target_user;
-    [[ -n "${target_transport}" ]] && unset target_transport;
-    [[ -n "${keyfile}" ]] && unset keyfile;
-    [[ -n "${error_count}" ]] && unset error_count;
+    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+    [[ -n "${continue_exec}" ]] && builtin unset -vcontinue_exec;
+    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
+    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
+    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
+    [[ -n "${target_transport}" ]] && builtin unset -vtarget_transport;
+    [[ -n "${keyfile}" ]] && builtin unset -vkeyfile;
+    [[ -n "${error_count}" ]] && builtin unset -verror_count;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -555,11 +555,11 @@ function copyKeysToTarget()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset start_epoch;
-    [[ -n "${end_epoch}" ]] && unset end_epoch;
-    [[ -n "${runtime}" ]] && unset runtime;
-    [[ -n "${function_name}" ]] && unset function_name;
-    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -vruntime;
+    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+    [[ -n "${cname}" ]] && builtin unset -vcname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -633,9 +633,9 @@ function fssh()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport:-${SSH_TRANSPORT_TYPE}} ${target_host} ${target_port:-${SSH_PORT_NUMBER}}";
         fi
 
-        [[ -n "${cname}" ]] && unset cname;
-        [[ -n "${function_name}" ]] && unset function_name;
-        [[ -n "${ret_code}" ]] && unset ret_code;
+        [[ -n "${cname}" ]] && builtin unset -vcname;
+        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
         returned_info="$(validateHostAvailability "${target_transport:-${SSH_TRANSPORT_TYPE}}" "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}")";
 
@@ -657,9 +657,9 @@ function fssh()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${target_host} ${target_port:-${SSH_PORT_NUMBER}} ${target_user} ${target_transport:-${SSH_TRANSPORT_TYPE}}";
             fi
 
-            [[ -n "${cname}" ]] && unset cname;
-            [[ -n "${function_name}" ]] && unset function_name;
-            [[ -n "${ret_code}" ]] && unset ret_code;
+            [[ -n "${cname}" ]] && builtin unset -vcname;
+            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
             copyKeysToTarget "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}" "${target_user}" "${target_transport:-${SSH_TRANSPORT_TYPE}}"
             ret_code="${?}";
@@ -682,10 +682,10 @@ function fssh()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ssh ${target_host} ${run_cmd}";
                 fi
 
-                [[ -n "${cmd_output}" ]] && unset cmd_output;
-                [[ -n "${ret_code}" ]] && unset ret_code;
+                [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
-                cmd_output="$(ssh "${target_host}" "${run_cmd}")";
+                cmd_output="$(ssh -F "${SETUP_ROOT}/config/system/sshconfig" -qTl "${target_user}" -oPort="${target_port:-${SSH_PORT_NUMBER}}" "${target_host}" "${run_cmd}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -706,16 +706,16 @@ function fssh()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && unset error_count;
-    [[ -n "${ret_code}" ]] && unset ret_code;
-    [[ -n "${sshconfig}" ]] && unset sshconfig;
-    [[ -n "${sshkey}" ]] && unset sshkey;
-    [[ -n "${target_host}" ]] && unset target_host;
-    [[ -n "${target_port}" ]] && unset target_port;
-    [[ -n "${target_user}" ]] && unset target_user;
-    [[ -n "${target_transport}" ]] && unset -v target_transport;
-    [[ -n "${run_cmd}" ]] && unset run_cmd;
-    [[ -n "${cmd_output}" ]] && unset cmd_output;
+    [[ -n "${error_count}" ]] && builtin unset -verror_count;
+    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+    [[ -n "${sshconfig}" ]] && builtin unset -vsshconfig;
+    [[ -n "${sshkey}" ]] && builtin unset -vsshkey;
+    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
+    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
+    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
+    [[ -n "${target_transport}" ]] && builtin unset -v-v target_transport;
+    [[ -n "${run_cmd}" ]] && builtin unset -vrun_cmd;
+    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -730,11 +730,11 @@ function fssh()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset start_epoch;
-    [[ -n "${end_epoch}" ]] && unset end_epoch;
-    [[ -n "${runtime}" ]] && unset runtime;
-    [[ -n "${function_name}" ]] && unset function_name;
-    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -vruntime;
+    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+    [[ -n "${cname}" ]] && builtin unset -vcname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
@@ -809,9 +809,9 @@ function fsftp()
             writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: validateHostAvailability ${target_transport:-_{SSH_TRANSPORT_TYPE}} ${target_host} ${target_port:-${SSH_PORT_NUMBER}}";
         fi
 
-        [[ -n "${cname}" ]] && unset cname;
-        [[ -n "${function_name}" ]] && unset function_name;
-        [[ -n "${ret_code}" ]] && unset ret_code;
+        [[ -n "${cname}" ]] && builtin unset -vcname;
+        [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+        [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
         returned_info="$(validateHostAvailability "${target_transport:-${SSH_TRANSPORT_TYPE}}" "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}")";
 
@@ -833,9 +833,9 @@ function fsftp()
                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: copyKeysToTarget ${target_host} ${target_port:-${SSH_PORT_NUMBER}} ${target_user} ${target_transport:-${SSH_TRANSPORT_TYPE}}";
             fi
 
-            [[ -n "${cname}" ]] && unset cname;
-            [[ -n "${function_name}" ]] && unset function_name;
-            [[ -n "${ret_code}" ]] && unset ret_code;
+            [[ -n "${cname}" ]] && builtin unset -vcname;
+            [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+            [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
             copyKeysToTarget "${target_host}" "${target_port:-${SSH_PORT_NUMBER}}" "${target_user}" "${target_transport:-${SSH_TRANSPORT_TYPE}}"
             ret_code="${?}";
@@ -858,10 +858,10 @@ function fsftp()
                     writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: sftp -b ${sftpfile} ${target_user}@${target_host}";
                 fi
 
-                [[ -n "${cmd_output}" ]] && unset cmd_output;
-                [[ -n "${ret_code}" ]] && unset ret_code;
+                [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
+                [[ -n "${ret_code}" ]] && builtin unset -vret_code;
 
-                cmd_output="$(sftp -b "${sftpfile}" "${target_user}@${target_host}")";
+                cmd_output="$(sftp -F "${SETUP_ROOT}/config/system/sshconfig" -qr -P "${target_port:-${SSH_PORT_NUMBER}}" -b "${sftpfile}" "${target_user}@${target_host}")";
                 ret_code="${?}";
 
                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
@@ -882,15 +882,15 @@ function fsftp()
 
     if [[ -n "${return_code}" ]] && (( return_code != 0 )); then return "${return_code}"; elif [[ -n "${error_count}" ]] && (( error_count != 0 )); then return_code="${error_count}"; fi
 
-    [[ -n "${error_count}" ]] && unset error_count;
-    [[ -n "${ret_code}" ]] && unset ret_code;
-    [[ -n "${sshconfig}" ]] && unset sshconfig;
-    [[ -n "${target_host}" ]] && unset target_host;
-    [[ -n "${target_port}" ]] && unset target_port;
-    [[ -n "${target_user}" ]] && unset target_user;
-    [[ -n "${target_transport}" ]] && unset target_transport;
-    [[ -n "${sftpfile}" ]] && unset sftpfile;
-    [[ -n "${cmd_output}" ]] && unset cmd_output;
+    [[ -n "${error_count}" ]] && builtin unset -verror_count;
+    [[ -n "${ret_code}" ]] && builtin unset -vret_code;
+    [[ -n "${sshconfig}" ]] && builtin unset -vsshconfig;
+    [[ -n "${target_host}" ]] && builtin unset -vtarget_host;
+    [[ -n "${target_port}" ]] && builtin unset -vtarget_port;
+    [[ -n "${target_user}" ]] && builtin unset -vtarget_user;
+    [[ -n "${target_transport}" ]] && builtin unset -vtarget_transport;
+    [[ -n "${sftpfile}" ]] && builtin unset -vsftpfile;
+    [[ -n "${cmd_output}" ]] && builtin unset -vcmd_output;
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
         writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "return_code -> ${return_code}";
@@ -905,11 +905,11 @@ function fsftp()
         writeLogEntry "FILE" "PERFORMANCE" "${$}" "${cname}" "${LINENO}" "${function_name}" "${function_name} TOTAL RUNTIME: $(( runtime / 60)) MINUTES, TOTAL ELAPSED: $(( runtime % 60)) SECONDS";
     fi
 
-    [[ -n "${start_epoch}" ]] && unset start_epoch;
-    [[ -n "${end_epoch}" ]] && unset end_epoch;
-    [[ -n "${runtime}" ]] && unset runtime;
-    [[ -n "${function_name}" ]] && unset function_name;
-    [[ -n "${cname}" ]] && unset cname;
+    [[ -n "${start_epoch}" ]] && builtin unset -vstart_epoch;
+    [[ -n "${end_epoch}" ]] && builtin unset -vend_epoch;
+    [[ -n "${runtime}" ]] && builtin unset -vruntime;
+    [[ -n "${function_name}" ]] && builtin unset -vfunction_name;
+    [[ -n "${cname}" ]] && builtin unset -vcname;
 
     if [[ -n "${ENABLE_VERBOSE}" ]] && [[ "${ENABLE_VERBOSE}" == "${_TRUE}" ]]; then set +x; fi
     if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set +v; fi
