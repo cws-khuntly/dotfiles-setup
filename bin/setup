@@ -1073,12 +1073,14 @@ else
         fi
 
         PACKAGE_NAME="$(grep -Ew "(^PACKAGE_NAME=)" "${PACKAGE_SETUP_FILE}" | cut -d "=" -f 2)";
+        SOURCE_BUILD_PATH="$(typeset -i count; readlink -f "$(dirname "${PACKAGE_SETUP_FILE}")/$(while (( count != LEVELS_TO_SETUP )); do echo -n '../'; (( count += 1 )); done;))")";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PACKAGE_NAME -> ${PACKAGE_NAME}";
+            writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SOURCE_BUILD_PATH -> ${SOURCE_BUILD_PATH}";
         fi
 
-        sed -i'' -e "s/BUILD_PATH=.*/BUILD_PATH=${CLONE_TO}/" "${PACKAGE_SETUP_FILE}";
+        sed -i'' -e "s/BUILD_PATH=.*/BUILD_PATH=${SOURCE_BUILD_PATH}/" "${PACKAGE_SETUP_FILE}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${PACKAGE_SETUP_FILE}";
@@ -1282,5 +1284,10 @@ if [[ -n "${ENABLE_TRACE}" ]] && [[ "${ENABLE_TRACE}" == "${_TRUE}" ]]; then set
 [[ -n "${SYSTEM_PATHS[*]}" ]] && unset SYSTEM_PATHS;
 [[ -n "${SETUP_PATHS[*]}" ]] && unset SETUP_PATHS;
 [[ -n "${CLONE_TO}" ]] && unset CLONE_TO;
+[[ -n "${PACKAGE_NAME}" ]] && unset PACKAGE_NAME;
+[[ -n "${SOURCE_BUILD_PATH}" ]] && unset SOURCE_BUILD_PATH;
+[[ -n "${BUILD_PATH}" ]] && unset BUILD_PATH;
+[[ -n "${BUILD_ROOT}" ]] && unset BUILD_ROOT;
+[[ -n "${CUSTOMIZE_BUILD}" ]] && unset CUSTOMIZE_BUILD;
 
 exit "${RETURN_CODE}";
