@@ -480,9 +480,9 @@ function installLocalFiles()
                                 writeLogEntry "FILE" "DEBUG" "${$}" "${cname}" "${LINENO}" "${function_name}" "EXEC: ln -is eval printf \"%s\" ${entry_source} eval printf \"%s\" ${entry_target}";
                             fi
 
-                            if [[ -L "$(eval printf "%s" "${entry_source}")" ]] || [[ -f "$(eval printf "%s" "${entry_source}")" ]] && [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]]; then cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_source}")"; fi
+                            if [[ -L "$(eval printf "%s" "${entry_target}")" ]] || [[ -f "$(eval printf "%s" "${entry_target}")" ]] && [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]]; then cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_target}")"; fi
 
-                            if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]] && [[ ! -L "$(eval printf "%s" "${entry_source}")" ]]; then
+                            if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then
                                 [[ -n "${cmd_output}" ]] && builtin unset -v cmd_output;
                                 [[ -n "${ret_code}" ]] && builtin unset -v ret_code;
 
@@ -552,7 +552,7 @@ function installLocalFiles()
                                 function_name="${cname}#${FUNCNAME[0]}";
                             fi
 
-                            if [[ -f "$(eval printf "%s" "${entry_source}")" ]] && [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]]; then cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_source}")"; fi
+                            if [[ -f "$(eval printf "%s" "${entry_target}")" ]] && [[ -n "${exempt_from_purge}" ]] && [[ "${exempt_from_purge}" == "${_FALSE}" ]]; then cleanupFiles "${CLEANUP_LOCATION_LOCAL}" "$(eval printf "%s" "${entry_target}")"; fi
 
                             if [[ -n "$(stat "$(eval printf "%s" "${entry_source}")" 2>/dev/null)" ]]; then
                                 if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
