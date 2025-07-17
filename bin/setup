@@ -1086,10 +1086,7 @@ else
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${PACKAGE_SETUP_FILE}";
         fi
 
-        # shellcheck source=/dev/null
-        [[ -n "${SOURCE_URL}" ]] && source "${CLONE_TO}/${PACKAGE_SETUP_FILE}";
-        # shellcheck source=/dev/null
-        [[ -z "${SOURCE_URL}" ]] && source "${PACKAGE_SETUP_FILE}";
+        source "${PACKAGE_SETUP_FILE}";
 
         FUNCTION_NAME="${CNAME}#loadBuildCustomizations";
 
