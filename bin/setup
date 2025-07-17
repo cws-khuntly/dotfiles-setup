@@ -1080,7 +1080,7 @@ else
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "SOURCE_BUILD_PATH -> ${SOURCE_BUILD_PATH}";
         fi
 
-        sed -i'' -e "s/BUILD_PATH=.*/BUILD_PATH=${SOURCE_BUILD_PATH}/" "${PACKAGE_SETUP_FILE}";
+        sed -i'' -e "s^BUILD_PATH=.*^BUILD_PATH=${SOURCE_BUILD_PATH}^" "${PACKAGE_SETUP_FILE}";
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${PACKAGE_SETUP_FILE}";
