@@ -56,23 +56,6 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "PRIMARY_CONFIG_FILE -> ${PRIMARY_CONFIG_FILE}";
 fi
 
-FUNCTION_NAME="${CNAME}#loadSetupConfig";
-
-if [[ -f "${CONFIG_FILE}" ]] && [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FILE}" ]]; then
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Found configuration file ${CONFIG_FILE}";
-    fi
-
-    WORKING_CONFIG_FILE="${CONFIG_FILE}";
-
-    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[ -n "${ENABLE_DEBUG}" ]] && [[ "${ENABLE_DEBUG}" == "${_TRUE}" ]]; then
-        writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
-    fi
-
-    # shellcheck source=../config/setup/setup.properties
-    source "${WORKING_CONFIG_FILE}";
-fi
-
 #
 # load the system libs/config
 #
@@ -164,6 +147,19 @@ for SETUP_PATH in "${SETUP_PATHS[@]}"; do
     [[ -n "${FILE_LIST[*]}" ]] && builtin unset -v FILE_LIST;
     [[ -n "${SETUP_PATH}" ]] && builtin unset -v SETUP_PATH;
 done
+
+#
+# read in properties
+#
+if [[ -f "${CONFIG_FILE}" ]] && [[ -r "${CONFIG_FILE}" ]] && [[ -s "${CONFIG_FILE}" ]]; then
+    readPropertyFile "${CONFIG_FILE}";
+else
+    RET_CODE=1;
+
+    if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
+        writeLogEntry "FILE" "ERROR" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "Configuration file ${CONFIG_FILE} is missing, not readable, or empty. Exiting.";
+    fi
+fi
 
 #
 # set up the trap
@@ -802,8 +798,7 @@ function capturedata()
                         writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "WORKING_CONFIG_FILE -> ${WORKING_CONFIG_FILE}";
                     fi
 
-                    # shellcheck source=/dev/null
-                    source "${WORKING_CONFIG_FILE}";
+                    readPropertyFile "${WORKING_CONFIG_FILE}";
                 fi
                 ;;
             "sourceurl"|"r")
@@ -1019,7 +1014,7 @@ if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]] && [[
     writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "TARGET_ACTION -> ${TARGET_ACTION}";
 fi
 
-if [[ -z "${PACKAGE_CONFIG}" ]]; then
+if [[ -z "${PACKAGE_CONFIG}" ]] && [[ -z "${RET_CODE}" ]] || (( RET_CODE == 0 )); then
     RETURN_CODE="1";
 
     if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
@@ -1086,8 +1081,7 @@ else
             writeLogEntry "FILE" "DEBUG" "${$}" "${CNAME}" "${LINENO}" "${FUNCTION_NAME}" "EXEC: source ${PACKAGE_SETUP_FILE}";
         fi
 
-        # shellcheck source=/dev/null
-        source "${PACKAGE_SETUP_FILE}";
+        readPropertyFile "${PACKAGE_SETUP_FILE}";
 
         FUNCTION_NAME="${CNAME}#loadBuildCustomizations";
 

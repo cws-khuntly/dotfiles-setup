@@ -231,7 +231,7 @@ function transferLocalFiles()
     fi
 
     if [[ -z "${files_to_process[*]}" ]] || (( ${#files_to_process[@]} == 0 )); then
-		return_code="${ret_code}"
+        return_code="${ret_code}"
 
         if [[ -n "${LOGGING_LOADED}" ]] && [[ "${LOGGING_LOADED}" == "${_TRUE}" ]]; then
             writeLogEntry "FILE" "ERROR" "${$}" "${cname}" "${LINENO}" "${function_name}" "File listing was null or empty. Please review logs.";
