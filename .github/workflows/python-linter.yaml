@@ -7,11 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: write
+      contents: read
       checks: write
-    strategy:
-      matrix:
-        source: [ ./src/main/python ]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -22,9 +19,7 @@ jobs:
         uses: advanced-security/python-lint-code-scanning-action@v1
         with:
           linter: pylint
-          source: ${{ matrix.source }}
       - name: Run typechecker
         uses: advanced-security/python-lint-code-scanning-action@v1
         with:
           linter: pytype
-          source: ${{ matrix.source }}
