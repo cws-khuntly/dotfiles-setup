@@ -1,3 +1,4 @@
 #
 # required for shell check sarif
 #
+paramiko==4.0.0
