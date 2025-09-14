@@ -20,8 +20,8 @@ from os import os
 from logging import logging
 from logging import logging.config
 
-from com.cwsna.common.logger.enum.LoggingConfiguration import LogConfig
-from com.cwsna.common.logger.enum.LoggingMessages import LogMessages
+from com.cwsna.common.logger.enum.logging_configuration import LogConfig
+from com.cwsna.common.logger.enum.logging_messages import LogMessages
 
 class CustomLogger:
     def __init__(self, logConfigFile):
