@@ -19,6 +19,6 @@
 from enum import Enum
 from pathlib import Path
 
-class LoggingConfig(Enum):
+class LogConfig(Enum):
     DEFAULT_LOG_CONFIG = str("{0}/logging/logging.properties").format(Path.cwd)
     IS_DEBUG_ENABLED = False
