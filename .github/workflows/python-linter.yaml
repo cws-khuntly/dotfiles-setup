@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: read
-      contents: write
+      contents: read
       checks: write
     steps:
       - name: Checkout repository
@@ -15,8 +15,9 @@ jobs:
         with:
           persist-credentials: false
           submodules: false
+      - name: Set up Python
+        uses: actions/setup-python@v5
+      - name: Install linter
+        run: pip install pylint
       - name: Run linter
-        uses: sunnysid3up/python-linter@master
-        with:
-          source: "src/main/python"
-          mypy-options: "--show-error-codes"
+        run: pylint . --recursive=y
