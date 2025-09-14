@@ -16,7 +16,7 @@
 #      REVISION:  ---
 #==============================================================================
 
-from ConfigParser import ConfigParser
+from configparser import ConfigParser
 
 from com.cwsna.common.logger.enum.logging_messages import LogMessages
 from com.cwsna.common.logger.impl.custom_logger import CustomLogger
@@ -41,7 +41,7 @@ class ReadPropertyFile:
         debugLogger.log(CustomLogger.logging.DEBUG, config)
 
         if (len(config) != 0):
-            if (config.has_section(sectionName)):
+            if (len(config.has_section(sectionName)) != 0):
                 configResponse = True
             #endif
         else:
