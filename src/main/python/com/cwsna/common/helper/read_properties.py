@@ -18,7 +18,6 @@
 
 from ConfigParser import ConfigParser
 
-from com.cwsna.common.logger.enum.logging_configuration import LogConfig
 from com.cwsna.common.logger.enum.logging_messages import LogMessages
 from com.cwsna.common.logger.impl.custom_logger import CustomLogger
 

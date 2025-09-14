@@ -18,7 +18,6 @@
 
 from os import os
 from logging import logging
-from logging import logging.config
 
 from com.cwsna.common.logger.enum.logging_configuration import LogConfig
 from com.cwsna.common.logger.enum.logging_messages import LogMessages
