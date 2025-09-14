@@ -16,10 +16,7 @@ jobs:
           persist-credentials: false
           submodules: false
       - name: Run linter
-        uses: advanced-security/python-lint-code-scanning-action@v1
+        uses: sunnysid3up/python-linter@master
         with:
-          linter: pylint
-      - name: Run typechecker
-        uses: advanced-security/python-lint-code-scanning-action@v1
-        with:
-          linter: pytype
+          source: "src/main/python"
+          mypy-options: "--show-error-codes"
