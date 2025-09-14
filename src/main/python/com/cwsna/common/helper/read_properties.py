@@ -18,9 +18,9 @@
 
 from ConfigParser import ConfigParser
 
-from com.cwsna.common.logger.enum.LoggingConfiguration import LogConfig
-from com.cwsna.common.logger.enum.LoggingMessages import LogMessages
-from com.cwsna.common.logger.impl.CustomLogger import CustomLogger
+from com.cwsna.common.logger.enum.logging_configuration import LogConfig
+from com.cwsna.common.logger.enum.logging_messages import LogMessages
+from com.cwsna.common.logger.impl.custom_logger import CustomLogger
 
 CustomLogger.configureLogging("/home/wasadm/workspace/WebSphere/AppServer/wsadmin/config/logging.properties")
 errorLogger = CustomLogger.logging.getLogger("error-logger")
