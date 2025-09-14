@@ -20,7 +20,7 @@ from ConfigParser import ConfigParser
 
 from com.cwsna.common.logger.enum.LoggingConfiguration import LogConfig
 from com.cwsna.common.logger.enum.LoggingMessages import LogMessages
-from com.cwsna.common.logger.impl.ConfigureLogging import ConfigureLogging as CustomLogger
+from com.cwsna.common.logger.impl.CustomLogger import CustomLogger
 
 CustomLogger.configureLogging("/home/wasadm/workspace/WebSphere/AppServer/wsadmin/config/logging.properties")
 errorLogger = CustomLogger.logging.getLogger("error-logger")
