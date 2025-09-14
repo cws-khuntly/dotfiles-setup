@@ -23,7 +23,7 @@ from logging import logging.config
 from com.cwsna.common.logger.enum.LoggingConfiguration import LogConfig
 from com.cwsna.common.logger.enum.LoggingMessages import LogMessages
 
-class Logger:
+class ConfigureLogger:
     def __init__(self, logConfigFile):
         if (len(logConfigFile) != 0):
             if (os.path.exists(logConfigFile)) and (os.access(logConfigFile, os.R_OK)):
