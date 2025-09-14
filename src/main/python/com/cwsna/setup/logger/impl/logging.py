@@ -20,7 +20,8 @@ from os import os
 from logging import logging
 from logging import logging.config
 
-from com.cwsna.setup.enum.LoggingConfiguration import LoggingConfigur
+from com.cwsna.common.logger.enum.LoggingConfiguration import LogConfig
+from com.cwsna.common.logger.enum.LoggingMessages import LogMessages
 
 class Logger:
     def __init__(self, logConfigFile):
@@ -34,9 +35,9 @@ class Logger:
             else:
                 print(str("The provided configuration file either cannot be read or does not exist."))
             #endif
-        elif (os.path.exists(LoggingConfiguration.DEFAULT_LOG_CONFIG)) and (os.access(defaultLogConfig, os.R_OK)):
+        elif (os.path.exists(LogConfiguration.DEFAULT_LOG_CONFIG)) and (os.access(LogConfiguration.DEFAULT_LOG_CONFIG, os.R_OK)):
             try:
-                logging.config.fileConfig(LoggingConfiguration.DEFAULT_LOG_CONFIG)
+                logging.config.fileConfig(LogConfiguration.DEFAULT_LOG_CONFIG)
             except Exception as e:
                 print(str("Failed to configure logging: {0}. No logging enabled!").format(str(e)))
             #endtry
