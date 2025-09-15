@@ -22,9 +22,9 @@ from logger.enum.logging_configuration import LogConfig
 from logger.enum.logging_messages import LogMessages
 from logger.custom_logger import CustomLogger
 
-CustomLogger.configureLogging(LogConfig.DEFAULT_LOG_CONFIG)
-errorLogger = CustomLogger.logging.getLogger("error-logger")
-debugLogger = CustomLogger.logging.getLogger("debug-logger")
+custom_logger = CustomLogger(LogConfig.DEFAULT_LOG_CONFIG)
+errorLogger = custom_logger.getLogger("error-logger")
+debugLogger = custom_logger.getLogger("debug-logger")
 
 class ReadPropertyFile:
     def __init__(self):
