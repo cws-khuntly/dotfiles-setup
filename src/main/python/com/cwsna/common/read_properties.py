@@ -31,7 +31,7 @@ class ReadPropertyFile:
         debugLogger.log(CustomLogger.logging.DEBUG, "ENTER: __init__")
     #enddef
 
-    def checkIfPropertySectionExists(config_file, section_name):
+    def check_if_section_exists(config_file, section_name):
         debugLogger.log(CustomLogger.logging.DEBUG, "ENTER: includes#checkIfPropertySectionExists(config_file, section_name)")
         debugLogger.log(CustomLogger.logging.DEBUG, config_file)
         debugLogger.log(CustomLogger.logging.DEBUG, section_name)
@@ -61,7 +61,7 @@ class ReadPropertyFile:
         return config_response
     #enddef
 
-    def returnPropertyConfiguration(config_file, section_name, value_name):
+    def return_property_list(config_file, section_name, value_name):
         debugLogger.log(CustomLogger.logging.DEBUG, "ENTER: includes#returnPropertyConfiguration(config_file, section_name, value_name)")
         debugLogger.log(CustomLogger.logging.DEBUG, config_file)
         debugLogger.log(CustomLogger.logging.DEBUG, section_name)
