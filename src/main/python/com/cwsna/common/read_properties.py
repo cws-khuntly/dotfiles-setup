@@ -22,7 +22,7 @@ from logger.enum.logging_configuration import LogConfig
 from logger.enum.logging_messages import LogMessages
 from logger.custom_logger import CustomLogger
 
-CustomLogger.configureLogging(LogConfig.DEFAULT_LOG_FILE)
+CustomLogger.configureLogging(LogConfig.DEFAULT_LOG_CONFIG)
 errorLogger = CustomLogger.logging.getLogger("error-logger")
 debugLogger = CustomLogger.logging.getLogger("debug-logger")
 
