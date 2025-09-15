@@ -28,64 +28,64 @@ debugLogger = custom_logger.getLogger("debug-logger")
 
 class ReadPropertyFile:
     def __init__(self):
-        debugLogger.log(CustomLogger.logging.DEBUG, "ENTER: __init__")
+        debugLogger.log(custom_logger.DEBUG, "ENTER: __init__")
     #enddef
 
     def check_if_section_exists(config_file, section_name):
-        debugLogger.log(CustomLogger.logging.DEBUG, "ENTER: includes#checkIfPropertySectionExists(config_file, section_name)")
-        debugLogger.log(CustomLogger.logging.DEBUG, config_file)
-        debugLogger.log(CustomLogger.logging.DEBUG, section_name)
+        debugLogger.log(custom_logger.DEBUG, "ENTER: includes#checkIfPropertySectionExists(config_file, section_name)")
+        debugLogger.log(custom_logger.DEBUG, config_file)
+        debugLogger.log(custom_logger.DEBUG, section_name)
 
         config_response = False
 
-        debugLogger.log(CustomLogger.logging.DEBUG, config_response)
+        debugLogger.log(custom_logger.DEBUG, config_response)
 
-        config = ConfigParser.ConfigParser()
+        config = configparser.ConfigParser()
         config.read(config_file)
 
-        debugLogger.log(CustomLogger.logging.DEBUG, config)
+        debugLogger.log(custom_logger.DEBUG, config)
 
         if (len(config) != 0):
             if (len(config.has_section(section_name)) != 0):
                 config_response = True
             #endif
         else:
-            errorLogger.log(CustomLogger.logging.ERROR, str("Unable to load configuration file {0}.").format(config_file))
+            errorLogger.log(custom_logger.ERROR, str("Unable to load configuration file {0}.").format(config_file))
 
             raise Exception(str("Unable to load configuration file {0}.").format(config_file))
         #endif
 
-        debugLogger.log(CustomLogger.logging.DEBUG, config_response)
-        debugLogger.log(CustomLogger.logging.DEBUG, "EXIT: includes#checkIfPropertySectionExists(config_file, section_name)")
+        debugLogger.log(custom_logger.DEBUG, config_response)
+        debugLogger.log(custom_logger.DEBUG, "EXIT: includes#checkIfPropertySectionExists(config_file, section_name)")
 
         return config_response
     #enddef
 
     def return_property_list(config_file, section_name, value_name):
-        debugLogger.log(CustomLogger.logging.DEBUG, "ENTER: includes#returnPropertyConfiguration(config_file, section_name, value_name)")
-        debugLogger.log(CustomLogger.logging.DEBUG, config_file)
-        debugLogger.log(CustomLogger.logging.DEBUG, section_name)
-        debugLogger.log(CustomLogger.logging.DEBUG, value_name)
+        debugLogger.log(custom_logger.DEBUG, "ENTER: includes#returnPropertyConfiguration(config_file, section_name, value_name)")
+        debugLogger.log(custom_logger.DEBUG, config_file)
+        debugLogger.log(custom_logger.DEBUG, section_name)
+        debugLogger.log(custom_logger.DEBUG, value_name)
 
         config_response = ""
 
-        debugLogger.log(CustomLogger.logging.DEBUG, config_response)
+        debugLogger.log(custom_logger.DEBUG, config_response)
 
-        config = ConfigParser.ConfigParser()
+        config = configarser.ConfigParser()
         config.read(config_file)
 
-        debugLogger.log(CustomLogger.logging.DEBUG, config)
+        debugLogger.log(custom_logger.DEBUG, config)
 
         if (len(config) != 0):
             config_response = config.get(section_name, value_name)
         else:
-            errorLogger.log(CustomLogger.logging.ERROR, str("Unable to load configuration file {0}.").format(config_file))
+            errorLogger.log(custom_logger.ERROR, str("Unable to load configuration file {0}.").format(config_file))
 
             raise Exception(str("Unable to load configuration file {0}.").format(config_file))
         #endif
 
-        debugLogger.log(CustomLogger.logging.DEBUG, config_response)
-        debugLogger.log(CustomLogger.logging.DEBUG, "EXIT: includes#returnPropertyConfiguration(config_file, section_name, value_name)")
+        debugLogger.log(custom_logger.DEBUG, config_response)
+        debugLogger.log(custom_logger.DEBUG, "EXIT: includes#returnPropertyConfiguration(config_file, section_name, value_name)")
 
         return config_response
     #enddef
