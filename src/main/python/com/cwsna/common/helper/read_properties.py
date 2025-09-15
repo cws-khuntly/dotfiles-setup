@@ -16,7 +16,7 @@
 #      REVISION:  ---
 #==============================================================================
 
-from configparser import configparser
+import configparser
 
 from common.logger.enum.logging_messages import LogMessages
 from common.logger.impl.custom_logger import CustomLogger

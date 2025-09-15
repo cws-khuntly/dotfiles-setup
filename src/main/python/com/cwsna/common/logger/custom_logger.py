@@ -16,8 +16,8 @@
 #      REVISION:  ---
 #==============================================================================
 
-from os import os
-from logging import logging
+import os
+import logging
 
 from logger.enum.logging_configuration import LogConfig
 from logger.enum.logging_messages import LogMessages
