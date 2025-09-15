@@ -18,9 +18,9 @@
 
 from configparser import ConfigParser
 
-from common.logger.enum.logging_configuration import LogConfig
-from common.logger.enum.logging_messages import LogMessages
-from common.logger.custom_logger import CustomLogger
+from logger.enum.logging_configuration import LogConfig
+from logger.enum.logging_messages import LogMessages
+from logger.custom_logger import CustomLogger
 
 CustomLogger.configureLogging(LogConfig.DEFAULT_LOG_FILE)
 errorLogger = CustomLogger.logging.getLogger("error-logger")
