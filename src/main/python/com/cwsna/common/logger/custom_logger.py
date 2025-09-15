@@ -19,15 +19,15 @@
 import os
 import logging
 
-from logger.enum.logging_configuration import LogConfig
-from logger.enum.logging_messages import LogMessages
+from enum.logging_configuration import LogConfig
+from enum.logging_messages import LogMessages
 
 class CustomLogger:
-    def __init__(self, logConfigFile):
+    def __init__(self, log_config_file):
         if (len(logConfigFile) != 0):
-            if (os.path.exists(logConfigFile)) and (os.access(logConfigFile, os.R_OK)):
+            if (os.path.exists(log_config_file)) and (os.access(log_config_file, os.R_OK)):
                 try:
-                    logging.config.fileConfig(logConfigFile)
+                    logging.config.fileConfig(log_config_file)
                 except Exception as e:
                     print(str("Failed to configure logging: {0}. No logging enabled!").format(str(e)))
                 #endtry
